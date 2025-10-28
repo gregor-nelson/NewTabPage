@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Tab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="phosphor-icons/regular.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Settings Button (Top Right) -->
+    <header class="header">
+        <button id="settings-btn" aria-label="Open settings">
+            <i class="ph ph-gear"></i>
+        </button>
+    </header>
+
+    <!-- Main Content (Vertically Centered) -->
+    <main class="main-content">
+        <!-- Widget Grid Container -->
+        <div class="widget-grid">
+            <!-- Clock Widget -->
+            <div id="clock-container" class="widget">
+                <div id="clock" aria-live="polite">
+                    00:00:00
+                </div>
+                <div id="date-line">
+                    Loading...
+                </div>
+            </div>
+
+            <!-- Calendar Widget -->
+            <div id="calendar-container" class="widget">
+                <!-- Calendar will be rendered here -->
+            </div>
+
+            <!-- Financial Widget -->
+            <div id="financial-container" class="widget">
+                <!-- Financial panel will be rendered here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Settings</h2>
+                <button id="close-settings" class="close-btn" aria-label="Close settings">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
+
+            <div class="settings-list">
+                <!-- Time Format -->
+                <div class="setting-item">
+                    <label class="setting-label">24-Hour Format</label>
+                    <label class="toggle-wrapper">
+                        <input type="checkbox" id="time-format-toggle" class="toggle-input" checked>
+                        <div class="toggle-slider"></div>
+                    </label>
+                </div>
+
+                <!-- Show Seconds -->
+                <div class="setting-item">
+                    <label class="setting-label">Show Seconds</label>
+                    <label class="toggle-wrapper">
+                        <input type="checkbox" id="show-seconds-toggle" class="toggle-input" checked>
+                        <div class="toggle-slider"></div>
+                    </label>
+                </div>
+
+                <!-- Week Starts On -->
+                <div class="setting-item">
+                    <label class="setting-label">Week Starts On</label>
+                    <select id="week-start-select" class="select">
+                        <option value="monday">Monday</option>
+                        <option value="sunday">Sunday</option>
+                    </select>
+                </div>
+
+                <!-- Show Week Numbers -->
+                <div class="setting-item">
+                    <label class="setting-label">Show Week Numbers</label>
+                    <label class="toggle-wrapper">
+                        <input type="checkbox" id="show-week-numbers-toggle" class="toggle-input" checked>
+                        <div class="toggle-slider"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
