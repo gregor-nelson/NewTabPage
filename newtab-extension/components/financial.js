@@ -14,7 +14,19 @@ export const financialWidget = {
     containerId: 'financial-container',
     init: initFinancial,
     update: updateFinancial,
-    cleanup: stopStatusUpdates
+    cleanup: stopStatusUpdates,
+
+    // Layout configuration for drag/drop/resize
+    layout: {
+        defaultPosition: { x: '50%', y: '200px' },
+        defaultSize: { width: '380px', height: '350px' },
+        minSize: { width: 280, height: 280 },
+        // No maxSize - can occupy full viewport
+        resizable: true,
+        draggable: true,
+        dragHandle: '.widget-header',
+        zIndex: 3
+    }
 };
 
 export function initFinancial(settings) {

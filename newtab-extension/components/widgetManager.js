@@ -39,7 +39,13 @@ export function registerWidget(id, config) {
         init: config.init,
         update: config.update,
         cleanup: config.cleanup || (() => {}),
-        containerId: config.containerId
+        containerId: config.containerId,
+        layout: config.layout || {}, // Store layout configuration
+        onDragStart: config.onDragStart,
+        onDragEnd: config.onDragEnd,
+        onResize: config.onResize,
+        onResizeStart: config.onResizeStart,
+        onResizeEnd: config.onResizeEnd
     });
 
     console.log(`Widget registered: ${id}`);
@@ -199,4 +205,12 @@ export function cleanupAllWidgets() {
     activeWidgets.forEach((widget, id) => {
         cleanupWidget(id);
     });
+}
+
+/**
+ * Get the widget registry
+ * @returns {Map} Widget registry map
+ */
+export function getWidgetRegistry() {
+    return widgetRegistry;
 }

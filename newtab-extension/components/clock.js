@@ -12,7 +12,19 @@ export const clockWidget = {
     containerId: 'clock-container',
     init: initClock,
     update: updateClockSettings,
-    cleanup: stopClock
+    cleanup: stopClock,
+
+    // Layout configuration for drag/drop/resize
+    layout: {
+        defaultPosition: { x: '10%', y: '5%' },
+        defaultSize: { width: '80%', height: '150px' },
+        minSize: { width: 300, height: 100 },
+        // No maxSize - can occupy full viewport
+        resizable: { width: true, height: false },  // Width only
+        draggable: true,
+        dragHandle: null,  // No specific drag handle - drag from anywhere with Ctrl
+        zIndex: 1
+    }
 };
 
 export function initClock(userSettings) {

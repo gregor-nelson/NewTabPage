@@ -6,7 +6,8 @@ const DEFAULT_SETTINGS = {
     showSeconds: true,
     weekStartsOn: 'monday',
     showWeekNumbers: true,
-    enabledWidgets: {} // Will be populated from widget registry
+    enabledWidgets: {}, // Will be populated from widget registry
+    customLayoutEnabled: false // Custom drag/drop/resize layout
 };
 
 let currentSettings = { ...DEFAULT_SETTINGS };
@@ -88,6 +89,22 @@ function setupSettingControls() {
     const showWeekNumbersToggle = document.getElementById('show-week-numbers-toggle');
     showWeekNumbersToggle?.addEventListener('change', (e) => {
         updateSetting('showWeekNumbers', e.target.checked);
+    });
+
+    // Custom layout toggle
+    const customLayoutToggle = document.getElementById('custom-layout-toggle');
+    customLayoutToggle?.addEventListener('change', (e) => {
+        updateSetting('customLayoutEnabled', e.target.checked);
+    });
+
+    // Reset layout button
+    const resetLayoutBtn = document.getElementById('reset-layout-btn');
+    resetLayoutBtn?.addEventListener('click', () => {
+        if (confirm('Reset all widgets to default positions and sizes?')) {
+            if (typeof window.resetWidgetLayout === 'function') {
+                window.resetWidgetLayout();
+            }
+        }
     });
 
     // Set up widget toggle listeners
@@ -175,22 +192,27 @@ function applySettings() {
     if (timeFormatToggle) {
         timeFormatToggle.checked = currentSettings.timeFormat === '24h';
     }
-    
+
     const showSecondsToggle = document.getElementById('show-seconds-toggle');
     if (showSecondsToggle) {
         showSecondsToggle.checked = currentSettings.showSeconds;
     }
-    
+
     const weekStartSelect = document.getElementById('week-start-select');
     if (weekStartSelect) {
         weekStartSelect.value = currentSettings.weekStartsOn;
     }
-    
+
     const showWeekNumbersToggle = document.getElementById('show-week-numbers-toggle');
     if (showWeekNumbersToggle) {
         showWeekNumbersToggle.checked = currentSettings.showWeekNumbers;
     }
-    
+
+    const customLayoutToggle = document.getElementById('custom-layout-toggle');
+    if (customLayoutToggle) {
+        customLayoutToggle.checked = currentSettings.customLayoutEnabled || false;
+    }
+
     // Notify components of settings
     if (onSettingsChangeCallback) {
         onSettingsChangeCallback(currentSettings);

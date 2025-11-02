@@ -12,7 +12,19 @@ export const calendarWidget = {
     containerId: 'calendar-container',
     init: initCalendar,
     update: updateCalendarSettings,
-    cleanup: () => {} // No cleanup needed for calendar
+    cleanup: () => {}, // No cleanup needed for calendar
+
+    // Layout configuration for drag/drop/resize
+    layout: {
+        defaultPosition: { x: '5%', y: '200px' },
+        defaultSize: { width: '400px', height: '350px' },
+        minSize: { width: 300, height: 280 },
+        // No maxSize - can occupy full viewport
+        resizable: true,
+        draggable: true,
+        dragHandle: '.widget-header',
+        zIndex: 2
+    }
 };
 
 export function initCalendar(userSettings) {

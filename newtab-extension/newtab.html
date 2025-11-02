@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="phosphor-icons/regular.css">
     <link rel="stylesheet" href="styles.css">
+    <script src="libs/interact.min.js"></script>
 </head>
 <body>
     <!-- Settings Button (Top Right) -->
@@ -24,6 +25,9 @@
         <div class="widget-grid">
             <!-- Clock Widget -->
             <div id="clock-container" class="widget">
+                <div class="widget-header">
+                    <span class="widget-title">Clock</span>
+                </div>
                 <div id="clock" aria-live="polite">
                     00:00:00
                 </div>
@@ -34,11 +38,17 @@
 
             <!-- Calendar Widget -->
             <div id="calendar-container" class="widget">
+                <div class="widget-header">
+                    <span class="widget-title">Calendar</span>
+                </div>
                 <!-- Calendar will be rendered here -->
             </div>
 
             <!-- Financial Widget -->
             <div id="financial-container" class="widget">
+                <div class="widget-header">
+                    <span class="widget-title">Markets</span>
+                </div>
                 <!-- Financial panel will be rendered here -->
             </div>
         </div>
@@ -89,6 +99,25 @@
                         <input type="checkbox" id="show-week-numbers-toggle" class="toggle-input" checked>
                         <div class="toggle-slider"></div>
                     </label>
+                </div>
+
+                <!-- Custom Layout -->
+                <div class="setting-item">
+                    <label class="setting-label">Custom Layout Mode</label>
+                    <label class="toggle-wrapper">
+                        <input type="checkbox" id="custom-layout-toggle" class="toggle-input">
+                        <div class="toggle-slider"></div>
+                    </label>
+                </div>
+                <div style="font-size: 0.75rem; color: #737373; margin-top: -0.5rem; padding-left: 0.25rem;">
+                    <kbd style="background: #262626; padding: 0.125rem 0.375rem; border-radius: 3px; font-size: 0.6875rem;">Ctrl</kbd> + <kbd style="background: #262626; padding: 0.125rem 0.375rem; border-radius: 3px; font-size: 0.6875rem;">Right Click</kbd> to drag from anywhere
+                </div>
+
+                <!-- Reset Layout Button -->
+                <div class="setting-item" style="margin-top: 1rem;">
+                    <button id="reset-layout-btn" class="secondary-btn" style="width: 100%; padding: 0.5rem; background-color: #262626; color: #a3a3a3; border: 1px solid #404040; border-radius: 4px; cursor: pointer; font-size: 0.875rem;">
+                        Reset Widget Layout
+                    </button>
                 </div>
             </div>
         </div>
