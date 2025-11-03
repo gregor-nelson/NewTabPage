@@ -1,0 +1,101 @@
+// main.js - Main orchestration
+import { clockWidget } from './components/clock/clock.js';
+import { calendarWidget } from './components/calendar/calendar.js';
+import { financialWidget } from './components/finance/financial.js';
+import { githubWidget } from './components/github/github.js';
+import { tidesWidget } from './components/tides/tides.js';
+import { registerWidget, initializeWidgets, updateAllWidgets, getWidgetRegistry } from './components/settings/widgetManager.js';
+import { initSettings, getSettings } from './components/settings/settings.js';
+import { initializeCustomLayout, resetLayout } from './components/layout/layoutManager.js';
+
+// Track if this is the initial load
+let isInitialLoad = true;
+
+// Register all available widgets
+registerWidget('clock', clockWidget);
+registerWidget('calendar', calendarWidget);
+registerWidget('financial', financialWidget);
+registerWidget('github', githubWidget);
+registerWidget('tides', tidesWidget);
+
+// Initialize the application
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize settings first, with callback for when settings change
+    initSettings(handleSettingsChange);
+
+    // Initialize widgets after a short delay to let settings load
+    setTimeout(() => {
+        initializeApp();
+        setupTideCacheButton();
+    }, 100);
+});
+
+function initializeApp() {
+    const settings = getSettings();
+    const customLayoutEnabled = settings.customLayoutEnabled || false;
+
+    if (customLayoutEnabled) {
+        // Use custom layout mode
+        const widgetRegistry = getWidgetRegistry();
+        initializeCustomLayout(widgetRegistry);
+    }
+
+    // Initialize all widgets
+    initializeWidgets(settings);
+
+    // Mark initial load as complete
+    isInitialLoad = false;
+}
+
+function handleSettingsChange(settings) {
+    // Skip handling on initial load (widgets aren't initialized yet)
+    if (isInitialLoad) {
+        return;
+    }
+
+    // Handle layout mode toggle
+    const wasCustomLayout = document.body.classList.contains('custom-layout-mode');
+    const isCustomLayout = settings.customLayoutEnabled || false;
+
+    if (wasCustomLayout !== isCustomLayout) {
+        // Layout mode changed - reload to apply
+        window.location.reload();
+        return;
+    }
+
+    // Update all widgets with new settings
+    updateAllWidgets(settings);
+}
+
+// Expose reset function globally for settings button
+window.resetWidgetLayout = resetLayout;
+
+// Setup clear tide cache button
+function setupTideCacheButton() {
+    const clearTideCacheBtn = document.getElementById('clear-tide-cache-btn');
+    if (clearTideCacheBtn) {
+        clearTideCacheBtn.addEventListener('click', () => {
+            // Clear tide-specific localStorage items
+            localStorage.removeItem('tidesWidget.cache.v1');
+            localStorage.removeItem('tidesWidget.settings.v1');
+
+            console.log('Tide cache cleared by user');
+
+            // Show visual feedback
+            const originalText = clearTideCacheBtn.textContent;
+            clearTideCacheBtn.textContent = '✅ Cache Cleared!';
+            clearTideCacheBtn.style.backgroundColor = '#10b981';
+            clearTideCacheBtn.style.color = '#fff';
+
+            // Reset button after 2 seconds and reload page
+            setTimeout(() => {
+                clearTideCacheBtn.textContent = originalText;
+                clearTideCacheBtn.style.backgroundColor = '#262626';
+                clearTideCacheBtn.style.color = '#a3a3a3';
+
+                // Reload page to fetch fresh data
+                window.location.reload();
+            }, 2000);
+        });
+    }
+}

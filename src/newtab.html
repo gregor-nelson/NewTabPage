@@ -8,7 +8,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="phosphor-icons/regular.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="stylesheet" href="styles/tides.css">
+    <script src="libs/chart.min.js"></script>
+    <script src="libs/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script src="libs/interact.min.js"></script>
 </head>
 <body>
@@ -50,6 +53,22 @@
                     <span class="widget-title">Markets</span>
                 </div>
                 <!-- Financial panel will be rendered here -->
+            </div>
+
+            <!-- GitHub Widget -->
+            <div id="github-container" class="widget">
+                <div class="widget-header">
+                    <span class="widget-title">GitHub</span>
+                </div>
+                <!-- GitHub panel will be rendered here -->
+            </div>
+
+            <!-- Tides Widget -->
+            <div id="tides-container" class="widget">
+                <div class="widget-header">
+                    <span class="widget-title">Tides</span>
+                </div>
+                <!-- Tides panel will be rendered here -->
             </div>
         </div>
     </main>
@@ -101,6 +120,23 @@
                     </label>
                 </div>
 
+                <!-- GitHub Username -->
+                <div class="setting-item">
+                    <label class="setting-label">
+                        GitHub Username (optional)
+                        <div style="font-size: 0.75rem; color: #737373; margin-top: 0.25rem; font-weight: 400;">
+                            Leave blank to track locally only
+                        </div>
+                    </label>
+                    <input type="text" id="github-username-input" class="text-input" placeholder="your-username" style="width: 12rem; padding: 0.5rem; background-color: #1a1a1a; border: 1px solid #404040; border-radius: 4px; color: #e5e5e5; font-size: 0.875rem;">
+                </div>
+
+                <!-- GitHub Weekly Goal -->
+                <div class="setting-item">
+                    <label class="setting-label">Weekly Commit Goal</label>
+                    <input type="number" id="github-weekly-goal-input" class="text-input" value="20" min="1" max="100" style="width: 5rem; padding: 0.5rem; background-color: #1a1a1a; border: 1px solid #404040; border-radius: 4px; color: #e5e5e5; font-size: 0.875rem; text-align: center;">
+                </div>
+
                 <!-- Custom Layout -->
                 <div class="setting-item">
                     <label class="setting-label">Custom Layout Mode</label>
@@ -118,6 +154,16 @@
                     <button id="reset-layout-btn" class="secondary-btn" style="width: 100%; padding: 0.5rem; background-color: #262626; color: #a3a3a3; border: 1px solid #404040; border-radius: 4px; cursor: pointer; font-size: 0.875rem;">
                         Reset Widget Layout
                     </button>
+                </div>
+
+                <!-- Clear Tide Cache Button -->
+                <div class="setting-item" style="margin-top: 0.5rem;">
+                    <button id="clear-tide-cache-btn" class="secondary-btn" style="width: 100%; padding: 0.5rem; background-color: #262626; color: #a3a3a3; border: 1px solid #404040; border-radius: 4px; cursor: pointer; font-size: 0.875rem;">
+                        🌊 Clear Tide Cache
+                    </button>
+                </div>
+                <div style="font-size: 0.75rem; color: #737373; margin-top: 0.25rem; padding-left: 0.25rem;">
+                    Clear cached tide data and refresh from API
                 </div>
             </div>
         </div>

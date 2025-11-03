@@ -6,6 +6,8 @@ const DEFAULT_SETTINGS = {
     showSeconds: true,
     weekStartsOn: 'monday',
     showWeekNumbers: true,
+    githubUsername: '',
+    githubWeeklyGoal: 20,
     enabledWidgets: {}, // Will be populated from widget registry
     customLayoutEnabled: false // Custom drag/drop/resize layout
 };
@@ -89,6 +91,21 @@ function setupSettingControls() {
     const showWeekNumbersToggle = document.getElementById('show-week-numbers-toggle');
     showWeekNumbersToggle?.addEventListener('change', (e) => {
         updateSetting('showWeekNumbers', e.target.checked);
+    });
+
+    // GitHub username input
+    const githubUsernameInput = document.getElementById('github-username-input');
+    githubUsernameInput?.addEventListener('change', (e) => {
+        updateSetting('githubUsername', e.target.value.trim());
+    });
+
+    // GitHub weekly goal input
+    const githubWeeklyGoalInput = document.getElementById('github-weekly-goal-input');
+    githubWeeklyGoalInput?.addEventListener('change', (e) => {
+        const value = parseInt(e.target.value, 10);
+        if (!isNaN(value) && value >= 1 && value <= 100) {
+            updateSetting('githubWeeklyGoal', value);
+        }
     });
 
     // Custom layout toggle
@@ -211,6 +228,16 @@ function applySettings() {
     const customLayoutToggle = document.getElementById('custom-layout-toggle');
     if (customLayoutToggle) {
         customLayoutToggle.checked = currentSettings.customLayoutEnabled || false;
+    }
+
+    const githubUsernameInput = document.getElementById('github-username-input');
+    if (githubUsernameInput) {
+        githubUsernameInput.value = currentSettings.githubUsername || '';
+    }
+
+    const githubWeeklyGoalInput = document.getElementById('github-weekly-goal-input');
+    if (githubWeeklyGoalInput) {
+        githubWeeklyGoalInput.value = currentSettings.githubWeeklyGoal || 20;
     }
 
     // Notify components of settings
