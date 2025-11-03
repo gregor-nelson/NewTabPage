@@ -6,6 +6,28 @@ const FETCH_THROTTLE = 60 * 1000; // 60 seconds between fetches for same symbol
 const STAGGER_DELAY = 300; // 300ms between staggered requests
 const YAHOO_API_BASE = 'https://query1.finance.yahoo.com/v8/finance/chart/';
 
+// Header indices - Major market overview
+const HEADER_INDICES = [
+    {
+        symbol: 'SPX',
+        name: 'S&P 500',
+        yahooSymbol: '^GSPC',
+        formatPrice: (price) => price.toFixed(2)
+    },
+    {
+        symbol: 'NASDAQ',
+        name: 'Nasdaq',
+        yahooSymbol: '^IXIC',
+        formatPrice: (price) => price.toFixed(2)
+    },
+    {
+        symbol: 'DJI',
+        name: 'Dow',
+        yahooSymbol: '^DJI',
+        formatPrice: (price) => price.toFixed(2)
+    }
+];
+
 // Asset configurations with Yahoo Finance symbols
 const ASSET_CONFIGS = [
     {
@@ -111,6 +133,34 @@ export function initDataService(onDataUpdate) {
  * Load cached data for all assets
  */
 function loadAllCachedData() {
+    // Load header indices
+    HEADER_INDICES.forEach(asset => {
+        const cachedData = getCachedData(asset.symbol);
+        if (cachedData) {
+            dataCache[asset.symbol] = {
+                ...cachedData,
+                isLoading: false
+            };
+
+            // Notify UI immediately with cached data
+            if (onDataUpdateCallback) {
+                onDataUpdateCallback(asset.symbol, dataCache[asset.symbol]);
+            }
+        } else {
+            // Initialize with loading state
+            dataCache[asset.symbol] = {
+                currentPrice: 0,
+                change: 0,
+                changePercent: 0,
+                trend: 'neutral',
+                isLoading: true,
+                error: null,
+                lastUpdated: null
+            };
+        }
+    });
+
+    // Load tracked assets
     ASSET_CONFIGS.forEach(asset => {
         const cachedData = getCachedData(asset.symbol);
         if (cachedData) {
@@ -186,10 +236,18 @@ function setCachedData(symbol, data) {
  * Start staggered fetch for all assets
  */
 function startStaggeredFetch() {
-    ASSET_CONFIGS.forEach((asset, index) => {
+    // Fetch header indices first
+    HEADER_INDICES.forEach((asset, index) => {
         setTimeout(() => {
             fetchAssetData(asset);
         }, index * STAGGER_DELAY);
+    });
+
+    // Then fetch tracked assets
+    ASSET_CONFIGS.forEach((asset, index) => {
+        setTimeout(() => {
+            fetchAssetData(asset);
+        }, (HEADER_INDICES.length + index) * STAGGER_DELAY);
     });
 }
 
@@ -347,6 +405,26 @@ async function fetchAssetData(asset) {
  */
 export function getAssetData(symbol) {
     return dataCache[symbol] || null;
+}
+
+/**
+ * Get header indices data formatted for display
+ */
+export function getHeaderIndicesData() {
+    return HEADER_INDICES.map(asset => {
+        const data = dataCache[asset.symbol] || {};
+
+        return {
+            symbol: asset.symbol,
+            label: asset.name,
+            value: asset.formatPrice(data.currentPrice || 0),
+            change: formatChange(data.change || 0),
+            changePercent: formatChangePercent(data.changePercent || 0),
+            trend: data.trend || 'neutral',
+            isLoading: data.isLoading || false,
+            error: data.error || null
+        };
+    });
 }
 
 /**

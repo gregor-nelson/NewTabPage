@@ -2,6 +2,7 @@
 import {
     initDataService,
     getAllAssetData,
+    getHeaderIndicesData,
     cleanupService
 } from './financialDataService.js';
 
@@ -19,8 +20,8 @@ export const financialWidget = {
     // Layout configuration for drag/drop/resize
     layout: {
         defaultPosition: { x: '50%', y: '200px' },
-        defaultSize: { width: '380px', height: '350px' },
-        minSize: { width: 280, height: 280 },
+        defaultSize: { width: '520px', height: '520px' },
+        minSize: { width: 380, height: 400 },
         // No maxSize - can occupy full viewport
         resizable: true,
         draggable: true,
@@ -67,6 +68,10 @@ function renderFinancialPanel() {
     const container = document.getElementById('financial-container');
     if (!container) return;
 
+    // Get header indices data
+    const indicesData = getHeaderIndicesData();
+    const indicesHTML = indicesData.map(index => createIndexItem(index)).join('');
+
     // Get current asset data from the service
     const metricsData = getAllAssetData();
     const metricsHTML = metricsData.map(metric => createMetricRow(metric)).join('');
@@ -74,11 +79,17 @@ function renderFinancialPanel() {
     const panelHTML = `
         <div class="financial-panel">
             <div class="financial-header">
-                <div id="market-status" class="market-status-pill">
-                    Market Closed
+                <div class="financial-header-top">
+                    <div id="market-status" class="market-status-pill">
+                        Market Closed
+                    </div>
+                    <div id="eastern-time" class="eastern-time">
+                        <i class="ph ph-buildings"></i>
+                        <span>ET 00:00</span>
+                    </div>
                 </div>
-                <div id="eastern-time" class="eastern-time">
-                    ET 00:00
+                <div class="financial-indices" id="financial-indices">
+                    ${indicesHTML}
                 </div>
             </div>
             <div class="financial-table" id="financial-table">
@@ -88,6 +99,29 @@ function renderFinancialPanel() {
     `;
 
     container.innerHTML = panelHTML;
+}
+
+function createIndexItem(index) {
+    const trendClass = index.trend === 'up' ? 'metric-positive' :
+                       index.trend === 'down' ? 'metric-negative' :
+                       'metric-neutral';
+
+    const trendIcon = index.trend === 'up' ? 'ph-caret-up' :
+                      index.trend === 'down' ? 'ph-caret-down' :
+                      'ph-minus';
+
+    const loadingClass = index.isLoading ? 'metric-loading' : '';
+
+    return `
+        <div class="financial-index-item ${loadingClass}" data-symbol="${index.symbol}">
+            <div class="index-name">${index.label}</div>
+            <div class="index-value">${index.value}</div>
+            <div class="index-change ${trendClass}">
+                <i class="ph ${trendIcon}"></i>
+                ${index.changePercent}
+            </div>
+        </div>
+    `;
 }
 
 function createMetricRow(metric) {
@@ -102,8 +136,13 @@ function createMetricRow(metric) {
     // Show loading state if data is loading
     const loadingClass = metric.isLoading ? 'metric-loading' : '';
 
+    // Calculate intensity based on absolute percentage change
+    const changeValue = parseFloat(metric.changePercent.replace(/[^0-9.-]/g, '')) || 0;
+    const absChange = Math.abs(changeValue);
+    const intensity = absChange >= 2.0 ? 'high' : absChange >= 1.0 ? 'medium' : 'low';
+
     return `
-        <div class="financial-row" data-symbol="${metric.symbol}">
+        <div class="financial-row" data-symbol="${metric.symbol}" data-category="${metric.category}" data-intensity="${intensity}">
             <div class="metric-icon-label">
                 <i class="ph ${metric.icon} metric-icon"></i>
                 <span class="metric-label">${metric.label}</span>
@@ -142,7 +181,13 @@ function updateMetricRow(symbol, data) {
 
         // Update change
         const sign = data.changePercent >= 0 ? '+' : '';
-        changeSpan.textContent = `${sign}${(data.changePercent || 0).toFixed(4)}%`;
+        const changePercent = `${sign}${(data.changePercent || 0).toFixed(4)}%`;
+        changeSpan.textContent = changePercent;
+
+        // Calculate intensity for visual effects
+        const absChange = Math.abs(data.changePercent || 0);
+        const intensity = absChange >= 2.0 ? 'high' : absChange >= 1.0 ? 'medium' : 'low';
+        row.setAttribute('data-intensity', intensity);
 
         // Update trend class
         changeSpan.className = 'metric-change';
@@ -195,7 +240,10 @@ function updateMarketStatus() {
         const hours = etTime.getHours();
         const minutes = etTime.getMinutes();
         const formattedTime = `${padZero(hours)}:${padZero(minutes)}`;
-        easternTimeElement.textContent = `ET ${formattedTime}`;
+        const timeSpan = easternTimeElement.querySelector('span');
+        if (timeSpan) {
+            timeSpan.textContent = `ET ${formattedTime}`;
+        }
     }
 }
 
