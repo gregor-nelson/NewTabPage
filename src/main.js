@@ -3,7 +3,7 @@ import { clockWidget } from './components/clock/clock.js';
 import { calendarWidget } from './components/calendar/calendar.js';
 import { financialWidget } from './components/finance/financial.js';
 import { githubWidget } from './components/github/github.js';
-import { tidesWidget } from './components/tides/tides.js';
+import { weatherWidget } from './components/weather/weather.js';
 import { registerWidget, initializeWidgets, updateAllWidgets, getWidgetRegistry } from './components/settings/widgetManager.js';
 import { initSettings, getSettings } from './components/settings/settings.js';
 import { initializeCustomLayout, resetLayout } from './components/layout/layoutManager.js';
@@ -16,7 +16,7 @@ registerWidget('clock', clockWidget);
 registerWidget('calendar', calendarWidget);
 registerWidget('financial', financialWidget);
 registerWidget('github', githubWidget);
-registerWidget('tides', tidesWidget);
+registerWidget('weather', weatherWidget);
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {
@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize widgets after a short delay to let settings load
     setTimeout(() => {
         initializeApp();
-        setupTideCacheButton();
     }, 100);
 });
 
@@ -69,33 +68,3 @@ function handleSettingsChange(settings) {
 
 // Expose reset function globally for settings button
 window.resetWidgetLayout = resetLayout;
-
-// Setup clear tide cache button
-function setupTideCacheButton() {
-    const clearTideCacheBtn = document.getElementById('clear-tide-cache-btn');
-    if (clearTideCacheBtn) {
-        clearTideCacheBtn.addEventListener('click', () => {
-            // Clear tide-specific localStorage items
-            localStorage.removeItem('tidesWidget.cache.v1');
-            localStorage.removeItem('tidesWidget.settings.v1');
-
-            console.log('Tide cache cleared by user');
-
-            // Show visual feedback
-            const originalText = clearTideCacheBtn.textContent;
-            clearTideCacheBtn.textContent = '✅ Cache Cleared!';
-            clearTideCacheBtn.style.backgroundColor = '#10b981';
-            clearTideCacheBtn.style.color = '#fff';
-
-            // Reset button after 2 seconds and reload page
-            setTimeout(() => {
-                clearTideCacheBtn.textContent = originalText;
-                clearTideCacheBtn.style.backgroundColor = '#262626';
-                clearTideCacheBtn.style.color = '#a3a3a3';
-
-                // Reload page to fetch fresh data
-                window.location.reload();
-            }, 2000);
-        });
-    }
-}

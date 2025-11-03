@@ -9,9 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Jost:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="phosphor-icons/regular.css">
     <link rel="stylesheet" href="styles/styles.css">
-    <link rel="stylesheet" href="styles/tides.css">
-    <script src="libs/chart.min.js"></script>
-    <script src="libs/chartjs-adapter-date-fns.bundle.min.js"></script>
     <script src="libs/interact.min.js"></script>
 </head>
 <body>
@@ -63,12 +60,12 @@
                 <!-- GitHub panel will be rendered here -->
             </div>
 
-            <!-- Tides Widget -->
-            <div id="tides-container" class="widget">
+            <!-- Weather Widget -->
+            <div id="weather-container" class="widget">
                 <div class="widget-header">
-                    <span class="widget-title">Tides</span>
+                    <span class="widget-title">Weather</span>
                 </div>
-                <!-- Tides panel will be rendered here -->
+                <!-- Weather content will be rendered by weather.js -->
             </div>
         </div>
     </main>
@@ -156,14 +153,51 @@
                     </button>
                 </div>
 
-                <!-- Clear Tide Cache Button -->
-                <div class="setting-item" style="margin-top: 0.5rem;">
-                    <button id="clear-tide-cache-btn" class="secondary-btn" style="width: 100%; padding: 0.5rem; background-color: #262626; color: #a3a3a3; border: 1px solid #404040; border-radius: 4px; cursor: pointer; font-size: 0.875rem;">
-                        🌊 Clear Tide Cache
-                    </button>
+                <!-- Weather Location -->
+                <div class="setting-item" style="margin-top: 1.5rem;">
+                    <label class="setting-label">
+                        Weather Location
+                        <div style="font-size: 0.75rem; color: #737373; margin-top: 0.25rem; font-weight: 400;">
+                            Enter city name or coordinates (lat, lon)
+                        </div>
+                    </label>
+                    <input type="text" id="weather-location" class="text-input" placeholder="London or 51.5074, -0.1278" style="width: 100%; padding: 0.5rem; background-color: #1a1a1a; border: 1px solid #404040; border-radius: 4px; color: #e5e5e5; font-size: 0.875rem;">
                 </div>
-                <div style="font-size: 0.75rem; color: #737373; margin-top: 0.25rem; padding-left: 0.25rem;">
-                    Clear cached tide data and refresh from API
+
+                <!-- Temperature Unit -->
+                <div class="setting-item">
+                    <label class="setting-label">Temperature Unit</label>
+                    <select id="temperature-unit" class="select" style="padding: 0.5rem; background-color: #1a1a1a; border: 1px solid #404040; border-radius: 4px; color: #e5e5e5; font-size: 0.875rem;">
+                        <option value="celsius">Celsius (°C)</option>
+                        <option value="fahrenheit">Fahrenheit (°F)</option>
+                    </select>
+                </div>
+
+                <!-- Wind Speed Unit -->
+                <div class="setting-item">
+                    <label class="setting-label">Wind Speed Unit</label>
+                    <select id="wind-speed-unit" class="select" style="padding: 0.5rem; background-color: #1a1a1a; border: 1px solid #404040; border-radius: 4px; color: #e5e5e5; font-size: 0.875rem;">
+                        <option value="kmh">Kilometers per Hour (km/h)</option>
+                        <option value="mph">Miles per Hour (mph)</option>
+                        <option value="ms">Meters per Second (m/s)</option>
+                    </select>
+                </div>
+
+                <!-- Weather Refresh Interval -->
+                <div class="setting-item">
+                    <label class="setting-label">Weather Refresh Interval</label>
+                    <select id="weather-refresh-interval" class="select" style="padding: 0.5rem; background-color: #1a1a1a; border: 1px solid #404040; border-radius: 4px; color: #e5e5e5; font-size: 0.875rem;">
+                        <option value="15">15 minutes</option>
+                        <option value="30" selected>30 minutes</option>
+                        <option value="60">60 minutes</option>
+                    </select>
+                </div>
+
+                <!-- Apply Weather Settings Button -->
+                <div class="setting-item" style="margin-top: 1rem;">
+                    <button id="apply-weather-settings-btn" class="secondary-btn" style="width: 100%; padding: 0.5rem; background-color: #10b981; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 0.875rem; font-weight: 500;">
+                        Apply Weather Settings
+                    </button>
                 </div>
             </div>
         </div>

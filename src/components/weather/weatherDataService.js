@@ -28,11 +28,11 @@ export function initWeatherService(onDataUpdate, settings = {}) {
 
     // Update service settings
     serviceSettings = {
-        lat: settings.weatherLat || null,
-        lon: settings.weatherLon || null,
-        locationName: settings.weatherLocationName || 'Unknown Location',
-        tempUnit: settings.temperatureUnit || 'celsius',
-        windUnit: settings.windSpeedUnit || 'kmh'
+        lat: settings.lat || null,
+        lon: settings.lon || null,
+        locationName: settings.locationName || 'Unknown Location',
+        tempUnit: settings.tempUnit || 'celsius',
+        windUnit: settings.windUnit || 'kmh'
     };
 
     // Load cached data immediately
@@ -81,18 +81,18 @@ export function initWeatherService(onDataUpdate, settings = {}) {
  */
 export function updateWeatherSettings(newSettings) {
     const settingsChanged =
-        newSettings.weatherLat !== serviceSettings.lat ||
-        newSettings.weatherLon !== serviceSettings.lon ||
-        newSettings.temperatureUnit !== serviceSettings.tempUnit ||
-        newSettings.windSpeedUnit !== serviceSettings.windUnit;
+        newSettings.lat !== serviceSettings.lat ||
+        newSettings.lon !== serviceSettings.lon ||
+        newSettings.tempUnit !== serviceSettings.tempUnit ||
+        newSettings.windUnit !== serviceSettings.windUnit;
 
     if (settingsChanged) {
         serviceSettings = {
-            lat: newSettings.weatherLat || serviceSettings.lat,
-            lon: newSettings.weatherLon || serviceSettings.lon,
-            locationName: newSettings.weatherLocationName || serviceSettings.locationName,
-            tempUnit: newSettings.temperatureUnit || serviceSettings.tempUnit,
-            windUnit: newSettings.windSpeedUnit || serviceSettings.windUnit
+            lat: newSettings.lat || serviceSettings.lat,
+            lon: newSettings.lon || serviceSettings.lon,
+            locationName: newSettings.locationName || serviceSettings.locationName,
+            tempUnit: newSettings.tempUnit || serviceSettings.tempUnit,
+            windUnit: newSettings.windUnit || serviceSettings.windUnit
         };
 
         // Refetch with new settings

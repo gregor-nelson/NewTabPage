@@ -9,7 +9,16 @@ const DEFAULT_SETTINGS = {
     githubUsername: '',
     githubWeeklyGoal: 20,
     enabledWidgets: {}, // Will be populated from widget registry
-    customLayoutEnabled: false // Custom drag/drop/resize layout
+    customLayoutEnabled: false, // Custom drag/drop/resize layout
+
+    // Weather settings
+    weatherLocation: 'Aberdeen',
+    weatherLat: 57.1497,
+    weatherLon: -2.0943,
+    weatherLocationName: 'Aberdeen, United Kingdom',
+    temperatureUnit: 'celsius',
+    windSpeedUnit: 'kmh',
+    weatherRefreshInterval: 30
 };
 
 let currentSettings = { ...DEFAULT_SETTINGS };
@@ -121,6 +130,95 @@ function setupSettingControls() {
             if (typeof window.resetWidgetLayout === 'function') {
                 window.resetWidgetLayout();
             }
+        }
+    });
+
+    // Apply Weather Settings Button
+    const applyWeatherSettingsBtn = document.getElementById('apply-weather-settings-btn');
+    applyWeatherSettingsBtn?.addEventListener('click', async () => {
+        const locationInput = document.getElementById('weather-location');
+        const tempUnitSelect = document.getElementById('temperature-unit');
+        const windUnitSelect = document.getElementById('wind-speed-unit');
+        const refreshSelect = document.getElementById('weather-refresh-interval');
+
+        const input = locationInput?.value.trim() || '';
+
+        // Show loading state on button
+        const originalText = applyWeatherSettingsBtn.textContent;
+        applyWeatherSettingsBtn.textContent = 'Applying...';
+        applyWeatherSettingsBtn.style.backgroundColor = '#6b7280';
+        applyWeatherSettingsBtn.disabled = true;
+
+        try {
+            // Process location if changed
+            if (input && input !== currentSettings.weatherLocation) {
+                // Check if input is coordinates (lat, lon)
+                const coordPattern = /^(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)$/;
+                const match = input.match(coordPattern);
+
+                if (match) {
+                    // User entered coordinates
+                    currentSettings.weatherLat = parseFloat(match[1]);
+                    currentSettings.weatherLon = parseFloat(match[2]);
+                    currentSettings.weatherLocationName = `${match[1]}, ${match[2]}`;
+                    currentSettings.weatherLocation = input;
+                } else {
+                    // User entered city name - use geocoding
+                    try {
+                        const geoUrl = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(input)}&count=1&language=en&format=json`;
+                        const response = await fetch(geoUrl);
+                        const data = await response.json();
+
+                        if (data.results && data.results.length > 0) {
+                            const location = data.results[0];
+                            currentSettings.weatherLat = location.latitude;
+                            currentSettings.weatherLon = location.longitude;
+                            currentSettings.weatherLocationName = location.name + (location.country ? `, ${location.country}` : '');
+                            currentSettings.weatherLocation = input;
+                        } else {
+                            throw new Error('Location not found');
+                        }
+                    } catch (error) {
+                        console.error('Geocoding error:', error);
+                        alert('Location not found. Please try entering coordinates (lat, lon) instead.');
+                        applyWeatherSettingsBtn.textContent = originalText;
+                        applyWeatherSettingsBtn.style.backgroundColor = '#10b981';
+                        applyWeatherSettingsBtn.disabled = false;
+                        return;
+                    }
+                }
+            } else if (!input) {
+                // Clear location
+                currentSettings.weatherLocation = '';
+                currentSettings.weatherLat = null;
+                currentSettings.weatherLon = null;
+                currentSettings.weatherLocationName = 'Unknown Location';
+            }
+
+            // Update other weather settings
+            currentSettings.temperatureUnit = tempUnitSelect?.value || 'celsius';
+            currentSettings.windSpeedUnit = windUnitSelect?.value || 'kmh';
+            currentSettings.weatherRefreshInterval = parseInt(refreshSelect?.value || '30');
+
+            // Save all settings
+            saveSettings();
+
+            // Success feedback
+            applyWeatherSettingsBtn.textContent = '✓ Applied!';
+            applyWeatherSettingsBtn.style.backgroundColor = '#059669';
+
+            setTimeout(() => {
+                applyWeatherSettingsBtn.textContent = originalText;
+                applyWeatherSettingsBtn.style.backgroundColor = '#10b981';
+                applyWeatherSettingsBtn.disabled = false;
+            }, 2000);
+
+        } catch (error) {
+            console.error('Error applying weather settings:', error);
+            alert('Failed to apply weather settings. Please try again.');
+            applyWeatherSettingsBtn.textContent = originalText;
+            applyWeatherSettingsBtn.style.backgroundColor = '#10b981';
+            applyWeatherSettingsBtn.disabled = false;
         }
     });
 
@@ -238,6 +336,30 @@ function applySettings() {
     const githubWeeklyGoalInput = document.getElementById('github-weekly-goal-input');
     if (githubWeeklyGoalInput) {
         githubWeeklyGoalInput.value = currentSettings.githubWeeklyGoal || 20;
+    }
+
+    // Weather location
+    const weatherLocationInput = document.getElementById('weather-location');
+    if (weatherLocationInput) {
+        weatherLocationInput.value = currentSettings.weatherLocation || '';
+    }
+
+    // Temperature unit
+    const temperatureUnitSelect = document.getElementById('temperature-unit');
+    if (temperatureUnitSelect) {
+        temperatureUnitSelect.value = currentSettings.temperatureUnit || 'celsius';
+    }
+
+    // Wind speed unit
+    const windSpeedUnitSelect = document.getElementById('wind-speed-unit');
+    if (windSpeedUnitSelect) {
+        windSpeedUnitSelect.value = currentSettings.windSpeedUnit || 'kmh';
+    }
+
+    // Weather refresh interval
+    const weatherRefreshSelect = document.getElementById('weather-refresh-interval');
+    if (weatherRefreshSelect) {
+        weatherRefreshSelect.value = currentSettings.weatherRefreshInterval || 30;
     }
 
     // Notify components of settings

@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(dir /s /b)"
+      "Bash(dir /s /b)",
+      "Bash(tree:*)",
+      "Bash(rm:*)",
+      "Bash(dir /s /b \"C:\\Users\\Default.DESKTOP-8TCQEDR\\Downloads\\Dev\\NewTabPage\\scripts\")"
     ],
     "deny": [],
     "ask": []
