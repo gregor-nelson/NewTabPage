@@ -1179,6 +1179,12 @@ body.custom-layout-mode.resizing {
 /* GitHub Widget Styles */
 /* ============================================ */
 
+/* Enable container queries for GitHub widget */
+#github-container {
+    container-type: inline-size;
+    container-name: github-widget;
+}
+
 .github-panel {
     background-color: transparent;
     border: none;
@@ -1187,6 +1193,8 @@ body.custom-layout-mode.resizing {
     display: flex;
     flex-direction: column;
     gap: 0.875rem;
+    height: 100%;
+    width: 100%;
 }
 
 /* GitHub Header Section (Streak + Settings Icon) */
@@ -1448,6 +1456,83 @@ body.custom-layout-mode.resizing {
     font-size: 0.75rem;
     color: #a3a3a3;
     font-weight: 400;
+}
+
+/* GitHub Widget - Container Queries for Custom Layout Mode */
+/* These respond to widget size, not viewport size */
+
+@container github-widget (max-width: 360px) {
+    .github-streak-number {
+        font-size: 1.5rem;
+    }
+
+    .github-streak-best {
+        font-size: 0.75rem;
+    }
+
+    .github-streak-label {
+        font-size: 0.625rem;
+    }
+
+    .github-section-label {
+        font-size: 0.625rem;
+    }
+
+    .github-grid-cell {
+        width: 0.9375rem;
+        height: 0.9375rem;
+    }
+
+    .github-grid-date-label {
+        font-size: 0.5625rem;
+        width: 0.9375rem;
+    }
+
+    .github-progress-label,
+    .github-progress-value {
+        font-size: 0.6875rem;
+    }
+
+    .github-today-label {
+        font-size: 0.6875rem;
+    }
+
+    .github-dot {
+        width: 0.375rem;
+        height: 0.375rem;
+    }
+}
+
+@container github-widget (max-width: 320px) {
+    .github-panel {
+        padding: 0.75rem;
+    }
+
+    .github-streak-number {
+        font-size: 1.25rem;
+    }
+
+    .github-fire-icon {
+        font-size: 1.25rem;
+    }
+
+    .github-grid-cell {
+        width: 0.875rem;
+        height: 0.875rem;
+    }
+
+    .github-grid-date-label {
+        font-size: 0.5rem;
+        width: 0.875rem;
+    }
+
+    .github-grid-row {
+        gap: 0.1875rem;
+    }
+
+    .github-habit-grid {
+        gap: 0.1875rem;
+    }
 }
 
 /* ========================================
