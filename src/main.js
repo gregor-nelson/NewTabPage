@@ -4,6 +4,8 @@ import { calendarWidget } from './components/calendar/calendar.js';
 import { financialWidget } from './components/finance/financial.js';
 import { githubWidget } from './components/github/github.js';
 import { weatherWidget } from './components/weather/weather.js';
+import { quickLinksWidget } from './components/quicklinks/quicklinks.js';
+import { calculatorWidget } from './components/calculator/calculator.js';
 import { registerWidget, initializeWidgets, updateAllWidgets, getWidgetRegistry } from './components/settings/widgetManager.js';
 import { initSettings, getSettings } from './components/settings/settings.js';
 import { initializeCustomLayout, resetLayout } from './components/layout/layoutManager.js';
@@ -17,6 +19,8 @@ registerWidget('calendar', calendarWidget);
 registerWidget('financial', financialWidget);
 registerWidget('github', githubWidget);
 registerWidget('weather', weatherWidget);
+registerWidget('quicklinks', quickLinksWidget);
+registerWidget('calculator', calculatorWidget);
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {

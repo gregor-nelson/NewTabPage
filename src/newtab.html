@@ -67,6 +67,22 @@
                 </div>
                 <!-- Weather content will be rendered by weather.js -->
             </div>
+
+            <!-- Quick Links Widget -->
+            <div id="quicklinks-container" class="widget">
+                <div class="widget-header">
+                    <span class="widget-title">Quick Links</span>
+                </div>
+                <!-- Quick links will be rendered by quicklinks.js -->
+            </div>
+
+            <!-- Calculator Widget -->
+            <div id="calculator-container" class="widget">
+                <div class="widget-header">
+                    <span class="widget-title">Calculator</span>
+                </div>
+                <!-- Calculator will be rendered by calculator.js -->
+            </div>
         </div>
     </main>
 
@@ -84,120 +100,180 @@
                 <!-- Time Format -->
                 <div class="setting-item">
                     <label class="setting-label">24-Hour Format</label>
-                    <label class="toggle-wrapper">
-                        <input type="checkbox" id="time-format-toggle" class="toggle-input" checked>
-                        <div class="toggle-slider"></div>
-                    </label>
+                    <div class="setting-control">
+                        <label class="toggle-wrapper">
+                            <input type="checkbox" id="time-format-toggle" class="toggle-input" checked>
+                            <div class="toggle-slider"></div>
+                        </label>
+                    </div>
                 </div>
 
                 <!-- Show Seconds -->
                 <div class="setting-item">
                     <label class="setting-label">Show Seconds</label>
-                    <label class="toggle-wrapper">
-                        <input type="checkbox" id="show-seconds-toggle" class="toggle-input" checked>
-                        <div class="toggle-slider"></div>
-                    </label>
+                    <div class="setting-control">
+                        <label class="toggle-wrapper">
+                            <input type="checkbox" id="show-seconds-toggle" class="toggle-input" checked>
+                            <div class="toggle-slider"></div>
+                        </label>
+                    </div>
                 </div>
 
                 <!-- Week Starts On -->
                 <div class="setting-item">
                     <label class="setting-label">Week Starts On</label>
-                    <select id="week-start-select" class="select">
-                        <option value="monday">Monday</option>
-                        <option value="sunday">Sunday</option>
-                    </select>
+                    <div class="setting-control">
+                        <select id="week-start-select" class="select">
+                            <option value="monday">Monday</option>
+                            <option value="sunday">Sunday</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Show Week Numbers -->
                 <div class="setting-item">
                     <label class="setting-label">Show Week Numbers</label>
-                    <label class="toggle-wrapper">
-                        <input type="checkbox" id="show-week-numbers-toggle" class="toggle-input" checked>
-                        <div class="toggle-slider"></div>
-                    </label>
+                    <div class="setting-control">
+                        <label class="toggle-wrapper">
+                            <input type="checkbox" id="show-week-numbers-toggle" class="toggle-input" checked>
+                            <div class="toggle-slider"></div>
+                        </label>
+                    </div>
                 </div>
 
                 <!-- GitHub Username -->
-                <div class="setting-item">
+                <div class="setting-item multiline">
                     <label class="setting-label">
                         GitHub Username (optional)
-                        <div style="font-size: 0.75rem; color: #737373; margin-top: 0.25rem; font-weight: 400;">
+                        <div style="font-size: 0.75rem; color: #737373; margin-top: 0.375rem; font-weight: 400;">
                             Leave blank to track locally only
                         </div>
                     </label>
-                    <input type="text" id="github-username-input" class="text-input" placeholder="your-username" style="width: 12rem; padding: 0.5rem; background-color: #1a1a1a; border: 1px solid #404040; border-radius: 4px; color: #e5e5e5; font-size: 0.875rem;">
+                    <div class="setting-control">
+                        <input type="text" id="github-username-input" class="text-input" placeholder="your-username">
+                    </div>
+                </div>
+
+                <!-- GitHub Personal Access Token -->
+                <div class="setting-item multiline">
+                    <label class="setting-label">
+                        GitHub Personal Access Token (optional)
+                        <div style="font-size: 0.75rem; color: #737373; margin-top: 0.375rem; font-weight: 400;">
+                            For cross-device sync and private activity tracking. <a href="https://github.com/settings/tokens" target="_blank" style="color: #0ea5e9;">Create token</a>
+                        </div>
+                    </label>
+                    <div class="setting-control">
+                        <input type="password" id="github-token-input" class="text-input" placeholder="ghp_••••••••••••••••">
+                    </div>
+                </div>
+
+                <!-- GitHub Tracking Mode -->
+                <div class="setting-item">
+                    <label class="setting-label">Use GitHub API</label>
+                    <div class="setting-control">
+                        <label class="toggle-wrapper">
+                            <input type="checkbox" id="github-api-mode-toggle" class="toggle-input">
+                            <div class="toggle-slider"></div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- GitHub Time Range -->
+                <div class="setting-item">
+                    <label class="setting-label">Activity Time Range</label>
+                    <div class="setting-control">
+                        <select id="github-time-range-select" class="select">
+                            <option value="7">7 days</option>
+                            <option value="28" selected>28 days</option>
+                            <option value="90">90 days</option>
+                            <option value="365">Year</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- GitHub Weekly Goal -->
                 <div class="setting-item">
                     <label class="setting-label">Weekly Commit Goal</label>
-                    <input type="number" id="github-weekly-goal-input" class="text-input" value="20" min="1" max="100" style="width: 5rem; padding: 0.5rem; background-color: #1a1a1a; border: 1px solid #404040; border-radius: 4px; color: #e5e5e5; font-size: 0.875rem; text-align: center;">
+                    <div class="setting-control">
+                        <input type="number" id="github-weekly-goal-input" class="text-input small" value="20" min="1" max="100" style="text-align: center;">
+                    </div>
                 </div>
 
                 <!-- Custom Layout -->
                 <div class="setting-item">
                     <label class="setting-label">Custom Layout Mode</label>
-                    <label class="toggle-wrapper">
-                        <input type="checkbox" id="custom-layout-toggle" class="toggle-input">
-                        <div class="toggle-slider"></div>
-                    </label>
+                    <div class="setting-control">
+                        <label class="toggle-wrapper">
+                            <input type="checkbox" id="custom-layout-toggle" class="toggle-input">
+                            <div class="toggle-slider"></div>
+                        </label>
+                    </div>
                 </div>
                 <div style="font-size: 0.75rem; color: #737373; margin-top: -0.5rem; padding-left: 0.25rem;">
                     <kbd style="background: #262626; padding: 0.125rem 0.375rem; border-radius: 3px; font-size: 0.6875rem;">Ctrl</kbd> + <kbd style="background: #262626; padding: 0.125rem 0.375rem; border-radius: 3px; font-size: 0.6875rem;">Right Click</kbd> to drag from anywhere
                 </div>
 
                 <!-- Reset Layout Button -->
-                <div class="setting-item" style="margin-top: 1rem;">
-                    <button id="reset-layout-btn" class="secondary-btn" style="width: 100%; padding: 0.5rem; background-color: #262626; color: #a3a3a3; border: 1px solid #404040; border-radius: 4px; cursor: pointer; font-size: 0.875rem;">
-                        Reset Widget Layout
-                    </button>
+                <div class="setting-item">
+                    <label class="setting-label">Reset Widget Layout</label>
+                    <div class="setting-control">
+                        <button id="reset-layout-btn" class="secondary-btn icon-btn" style="background-color: #262626; color: #a3a3a3; border: 1px solid #404040;" title="Reset Widget Layout" aria-label="Reset Widget Layout">
+                            <i class="ph ph-arrow-counter-clockwise"></i>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Weather Location -->
-                <div class="setting-item" style="margin-top: 1.5rem;">
+                <!-- Weather Settings Section -->
+                <div class="settings-section">
+                    <div class="section-header">Weather Settings</div>
+
+                    <!-- Weather Location -->
+                    <div class="setting-item multiline">
                     <label class="setting-label">
                         Weather Location
-                        <div style="font-size: 0.75rem; color: #737373; margin-top: 0.25rem; font-weight: 400;">
-                            Enter city name or coordinates (lat, lon)
+                        <div style="font-size: 0.75rem; color: #737373; margin-top: 0.375rem; font-weight: 400;">
+                            City name or coordinates (lat, lon). Press Enter to apply.
                         </div>
                     </label>
-                    <input type="text" id="weather-location" class="text-input" placeholder="London or 51.5074, -0.1278" style="width: 100%; padding: 0.5rem; background-color: #1a1a1a; border: 1px solid #404040; border-radius: 4px; color: #e5e5e5; font-size: 0.875rem;">
+                    <div class="setting-control">
+                        <input type="text" id="weather-location" class="text-input" placeholder="London or 51.5074, -0.1278">
+                    </div>
                 </div>
 
                 <!-- Temperature Unit -->
                 <div class="setting-item">
                     <label class="setting-label">Temperature Unit</label>
-                    <select id="temperature-unit" class="select" style="padding: 0.5rem; background-color: #1a1a1a; border: 1px solid #404040; border-radius: 4px; color: #e5e5e5; font-size: 0.875rem;">
-                        <option value="celsius">Celsius (°C)</option>
-                        <option value="fahrenheit">Fahrenheit (°F)</option>
-                    </select>
+                    <div class="setting-control">
+                        <select id="temperature-unit" class="select">
+                            <option value="celsius">Celsius (°C)</option>
+                            <option value="fahrenheit">Fahrenheit (°F)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Wind Speed Unit -->
                 <div class="setting-item">
                     <label class="setting-label">Wind Speed Unit</label>
-                    <select id="wind-speed-unit" class="select" style="padding: 0.5rem; background-color: #1a1a1a; border: 1px solid #404040; border-radius: 4px; color: #e5e5e5; font-size: 0.875rem;">
-                        <option value="kmh">Kilometers per Hour (km/h)</option>
-                        <option value="mph">Miles per Hour (mph)</option>
-                        <option value="ms">Meters per Second (m/s)</option>
-                    </select>
+                    <div class="setting-control">
+                        <select id="wind-speed-unit" class="select">
+                            <option value="kmh">Kilometers per Hour (km/h)</option>
+                            <option value="mph">Miles per Hour (mph)</option>
+                            <option value="ms">Meters per Second (m/s)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Weather Refresh Interval -->
                 <div class="setting-item">
                     <label class="setting-label">Weather Refresh Interval</label>
-                    <select id="weather-refresh-interval" class="select" style="padding: 0.5rem; background-color: #1a1a1a; border: 1px solid #404040; border-radius: 4px; color: #e5e5e5; font-size: 0.875rem;">
-                        <option value="15">15 minutes</option>
-                        <option value="30" selected>30 minutes</option>
-                        <option value="60">60 minutes</option>
-                    </select>
+                    <div class="setting-control">
+                        <select id="weather-refresh-interval" class="select">
+                            <option value="15">15 minutes</option>
+                            <option value="30" selected>30 minutes</option>
+                            <option value="60">60 minutes</option>
+                        </select>
+                    </div>
                 </div>
-
-                <!-- Apply Weather Settings Button -->
-                <div class="setting-item" style="margin-top: 1rem;">
-                    <button id="apply-weather-settings-btn" class="secondary-btn" style="width: 100%; padding: 0.5rem; background-color: #10b981; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 0.875rem; font-weight: 500;">
-                        Apply Weather Settings
-                    </button>
                 </div>
             </div>
         </div>

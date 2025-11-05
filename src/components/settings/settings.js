@@ -7,6 +7,9 @@ const DEFAULT_SETTINGS = {
     weekStartsOn: 'monday',
     showWeekNumbers: true,
     githubUsername: '',
+    githubToken: '',
+    githubUseAPI: false,
+    githubTimeRange: 28,
     githubWeeklyGoal: 20,
     enabledWidgets: {}, // Will be populated from widget registry
     customLayoutEnabled: false, // Custom drag/drop/resize layout
@@ -49,6 +52,8 @@ function setupModalControls() {
     // Open modal
     settingsBtn?.addEventListener('click', () => {
         settingsModal?.classList.add('show');
+        // Refresh UI controls to match current settings
+        applySettings();
     });
     
     // Close modal
@@ -108,6 +113,24 @@ function setupSettingControls() {
         updateSetting('githubUsername', e.target.value.trim());
     });
 
+    // GitHub token input
+    const githubTokenInput = document.getElementById('github-token-input');
+    githubTokenInput?.addEventListener('change', (e) => {
+        updateSetting('githubToken', e.target.value.trim());
+    });
+
+    // GitHub API mode toggle
+    const githubApiModeToggle = document.getElementById('github-api-mode-toggle');
+    githubApiModeToggle?.addEventListener('change', (e) => {
+        updateSetting('githubUseAPI', e.target.checked);
+    });
+
+    // GitHub time range select
+    const githubTimeRangeSelect = document.getElementById('github-time-range-select');
+    githubTimeRangeSelect?.addEventListener('change', (e) => {
+        updateSetting('githubTimeRange', parseInt(e.target.value, 10));
+    });
+
     // GitHub weekly goal input
     const githubWeeklyGoalInput = document.getElementById('github-weekly-goal-input');
     githubWeeklyGoalInput?.addEventListener('change', (e) => {
@@ -133,21 +156,28 @@ function setupSettingControls() {
         }
     });
 
-    // Apply Weather Settings Button
-    const applyWeatherSettingsBtn = document.getElementById('apply-weather-settings-btn');
-    applyWeatherSettingsBtn?.addEventListener('click', async () => {
-        const locationInput = document.getElementById('weather-location');
-        const tempUnitSelect = document.getElementById('temperature-unit');
-        const windUnitSelect = document.getElementById('wind-speed-unit');
-        const refreshSelect = document.getElementById('weather-refresh-interval');
+    // Temperature unit select - auto-apply
+    const tempUnitSelect = document.getElementById('temperature-unit');
+    tempUnitSelect?.addEventListener('change', (e) => {
+        updateSetting('temperatureUnit', e.target.value);
+    });
 
+    // Wind speed unit select - auto-apply
+    const windUnitSelect = document.getElementById('wind-speed-unit');
+    windUnitSelect?.addEventListener('change', (e) => {
+        updateSetting('windSpeedUnit', e.target.value);
+    });
+
+    // Weather refresh interval select - auto-apply
+    const refreshSelect = document.getElementById('weather-refresh-interval');
+    refreshSelect?.addEventListener('change', (e) => {
+        updateSetting('weatherRefreshInterval', parseInt(e.target.value));
+    });
+
+    // Weather location input - auto-apply on blur or Enter key
+    const locationInput = document.getElementById('weather-location');
+    const applyWeatherLocation = async () => {
         const input = locationInput?.value.trim() || '';
-
-        // Show loading state on button
-        const originalText = applyWeatherSettingsBtn.textContent;
-        applyWeatherSettingsBtn.textContent = 'Applying...';
-        applyWeatherSettingsBtn.style.backgroundColor = '#6b7280';
-        applyWeatherSettingsBtn.disabled = true;
 
         try {
             // Process location if changed
@@ -181,11 +211,14 @@ function setupSettingControls() {
                     } catch (error) {
                         console.error('Geocoding error:', error);
                         alert('Location not found. Please try entering coordinates (lat, lon) instead.');
-                        applyWeatherSettingsBtn.textContent = originalText;
-                        applyWeatherSettingsBtn.style.backgroundColor = '#10b981';
-                        applyWeatherSettingsBtn.disabled = false;
                         return;
                     }
+                }
+
+                // Save settings and notify
+                saveSettings();
+                if (onSettingsChangeCallback) {
+                    onSettingsChangeCallback(currentSettings);
                 }
             } else if (!input) {
                 // Clear location
@@ -193,32 +226,21 @@ function setupSettingControls() {
                 currentSettings.weatherLat = null;
                 currentSettings.weatherLon = null;
                 currentSettings.weatherLocationName = 'Unknown Location';
+                saveSettings();
+                if (onSettingsChangeCallback) {
+                    onSettingsChangeCallback(currentSettings);
+                }
             }
-
-            // Update other weather settings
-            currentSettings.temperatureUnit = tempUnitSelect?.value || 'celsius';
-            currentSettings.windSpeedUnit = windUnitSelect?.value || 'kmh';
-            currentSettings.weatherRefreshInterval = parseInt(refreshSelect?.value || '30');
-
-            // Save all settings
-            saveSettings();
-
-            // Success feedback
-            applyWeatherSettingsBtn.textContent = '✓ Applied!';
-            applyWeatherSettingsBtn.style.backgroundColor = '#059669';
-
-            setTimeout(() => {
-                applyWeatherSettingsBtn.textContent = originalText;
-                applyWeatherSettingsBtn.style.backgroundColor = '#10b981';
-                applyWeatherSettingsBtn.disabled = false;
-            }, 2000);
-
         } catch (error) {
-            console.error('Error applying weather settings:', error);
-            alert('Failed to apply weather settings. Please try again.');
-            applyWeatherSettingsBtn.textContent = originalText;
-            applyWeatherSettingsBtn.style.backgroundColor = '#10b981';
-            applyWeatherSettingsBtn.disabled = false;
+            console.error('Error applying weather location:', error);
+            alert('Failed to apply weather location. Please try again.');
+        }
+    };
+
+    locationInput?.addEventListener('blur', applyWeatherLocation);
+    locationInput?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            applyWeatherLocation();
         }
     });
 
@@ -251,14 +273,16 @@ function generateWidgetControls() {
         const widgetToggleHTML = `
             <div class="setting-item">
                 <label class="setting-label">${widget.displayName}</label>
-                <label class="toggle-wrapper">
-                    <input type="checkbox"
-                           id="widget-toggle-${widget.id}"
-                           class="toggle-input widget-toggle"
-                           data-widget-id="${widget.id}"
-                           ${isEnabled ? 'checked' : ''}>
-                    <div class="toggle-slider"></div>
-                </label>
+                <div class="setting-control">
+                    <label class="toggle-wrapper">
+                        <input type="checkbox"
+                               id="widget-toggle-${widget.id}"
+                               class="toggle-input widget-toggle"
+                               data-widget-id="${widget.id}"
+                               ${isEnabled ? 'checked' : ''}>
+                        <div class="toggle-slider"></div>
+                    </label>
+                </div>
             </div>
         `;
 
@@ -333,6 +357,21 @@ function applySettings() {
         githubUsernameInput.value = currentSettings.githubUsername || '';
     }
 
+    const githubTokenInput = document.getElementById('github-token-input');
+    if (githubTokenInput) {
+        githubTokenInput.value = currentSettings.githubToken || '';
+    }
+
+    const githubApiModeToggle = document.getElementById('github-api-mode-toggle');
+    if (githubApiModeToggle) {
+        githubApiModeToggle.checked = currentSettings.githubUseAPI || false;
+    }
+
+    const githubTimeRangeSelect = document.getElementById('github-time-range-select');
+    if (githubTimeRangeSelect) {
+        githubTimeRangeSelect.value = currentSettings.githubTimeRange || 28;
+    }
+
     const githubWeeklyGoalInput = document.getElementById('github-weekly-goal-input');
     if (githubWeeklyGoalInput) {
         githubWeeklyGoalInput.value = currentSettings.githubWeeklyGoal || 20;
@@ -361,6 +400,15 @@ function applySettings() {
     if (weatherRefreshSelect) {
         weatherRefreshSelect.value = currentSettings.weatherRefreshInterval || 30;
     }
+
+    // Update widget toggles to match current settings
+    const widgetToggles = document.querySelectorAll('.widget-toggle');
+    widgetToggles.forEach(toggle => {
+        const widgetId = toggle.dataset.widgetId;
+        if (widgetId && currentSettings.enabledWidgets) {
+            toggle.checked = currentSettings.enabledWidgets[widgetId] !== false;
+        }
+    });
 
     // Notify components of settings
     if (onSettingsChangeCallback) {

@@ -166,32 +166,46 @@ function renderWeatherWidget() {
 
     const data = getWeatherData();
 
-    // Widget HTML structure
+    // Find or create widget header (for refresh button)
+    let widgetHeader = container.querySelector('.widget-header');
+
+    // Add refresh button to header if it doesn't exist
+    if (widgetHeader && !widgetHeader.querySelector('.widget-refresh-btn')) {
+        const refreshBtn = document.createElement('button');
+        refreshBtn.className = 'widget-refresh-btn';
+        refreshBtn.id = 'weather-refresh-btn';
+        refreshBtn.title = 'Refresh';
+        refreshBtn.innerHTML = '<i class="ph ph-arrows-clockwise"></i>';
+        widgetHeader.appendChild(refreshBtn);
+    }
+
+    // Widget HTML structure (no duplicate header)
     const widgetHTML = `
-        <div class="weather-widget">
-            <div class="widget-header">
-                <div class="widget-title">
-                    <i class="ph ph-cloud-sun"></i>
-                    <span>Weather</span>
-                </div>
-                <button class="widget-refresh-btn" id="weather-refresh-btn" title="Refresh">
-                    <i class="ph ph-arrows-clockwise"></i>
-                </button>
-            </div>
-            <div class="weather-content">
-                ${renderWeatherContent(data)}
-            </div>
+        <div class="weather-wrapper">
+            ${renderWeatherContent(data)}
         </div>
     `;
 
-    container.innerHTML = widgetHTML;
+    // Find existing content or insert after header
+    const existingWrapper = container.querySelector('.weather-wrapper');
+    if (existingWrapper) {
+        existingWrapper.outerHTML = widgetHTML;
+    } else if (widgetHeader) {
+        widgetHeader.insertAdjacentHTML('afterend', widgetHTML);
+    } else {
+        container.innerHTML = widgetHTML;
+    }
 
     // Add event listeners
     const refreshBtn = document.getElementById('weather-refresh-btn');
     if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => {
-            forceRefreshWeather();
-        });
+        refreshBtn.replaceWith(refreshBtn.cloneNode(true)); // Remove old listeners
+        const newRefreshBtn = document.getElementById('weather-refresh-btn');
+        if (newRefreshBtn) {
+            newRefreshBtn.addEventListener('click', () => {
+                forceRefreshWeather();
+            });
+        }
     }
 }
 
