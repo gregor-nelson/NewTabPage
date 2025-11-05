@@ -28,79 +28,629 @@ const HEADER_INDICES = [
     }
 ];
 
-// Asset configurations with Yahoo Finance symbols
+// Progressive loading phases
+const LOADING_PHASES = {
+    critical: 0,    // Load immediately (header indices + key metrics)
+    important: 1,   // Load after 2 seconds
+    secondary: 2    // Load after 8 seconds
+};
+
+// Symbol categories for organized display
+const SYMBOL_CATEGORIES = {
+    // Volatility metrics
+    volatility: [
+        {
+            symbol: 'VIX',
+            name: 'VIX',
+            yahooSymbol: '^VIX',
+            icon: 'ph-chart-line',
+            category: 'volatility',
+            loadPhase: LOADING_PHASES.critical,
+            formatPrice: (price) => price.toFixed(2)
+        },
+        {
+            symbol: 'VVIX',
+            name: 'VVIX',
+            yahooSymbol: '^VVIX',
+            icon: 'ph-chart-line',
+            category: 'volatility',
+            loadPhase: LOADING_PHASES.important,
+            formatPrice: (price) => price.toFixed(2)
+        },
+        {
+            symbol: 'VIX9D',
+            name: 'VIX 9-Day',
+            yahooSymbol: '^VIX9D',
+            icon: 'ph-chart-line',
+            category: 'volatility',
+            loadPhase: LOADING_PHASES.important,
+            formatPrice: (price) => price.toFixed(2)
+        },
+        {
+            symbol: 'VXST',
+            name: 'VXST',
+            yahooSymbol: '^VXST',
+            icon: 'ph-chart-line',
+            category: 'volatility',
+            loadPhase: LOADING_PHASES.important,
+            formatPrice: (price) => price.toFixed(2)
+        }
+    ],
+
+    // Treasury yields
+    treasuries: [
+        {
+            symbol: '3M',
+            name: '3-Month',
+            yahooSymbol: '^IRX',
+            icon: 'ph-bank',
+            category: 'treasuries',
+            loadPhase: LOADING_PHASES.important,
+            formatPrice: (price) => `${price.toFixed(3)}%`
+        },
+        {
+            symbol: '5Y',
+            name: '5-Year',
+            yahooSymbol: '^FVX',
+            icon: 'ph-bank',
+            category: 'treasuries',
+            loadPhase: LOADING_PHASES.important,
+            formatPrice: (price) => `${price.toFixed(3)}%`
+        },
+        {
+            symbol: '10Y',
+            name: '10-Year',
+            yahooSymbol: '^TNX',
+            icon: 'ph-bank',
+            category: 'treasuries',
+            loadPhase: LOADING_PHASES.critical,
+            formatPrice: (price) => `${price.toFixed(3)}%`
+        },
+        {
+            symbol: '30Y',
+            name: '30-Year',
+            yahooSymbol: '^TYX',
+            icon: 'ph-bank',
+            category: 'treasuries',
+            loadPhase: LOADING_PHASES.important,
+            formatPrice: (price) => `${price.toFixed(3)}%`
+        }
+    ],
+
+    // Currencies
+    currencies: [
+        {
+            symbol: 'DXY',
+            name: 'US Dollar Index',
+            yahooSymbol: 'DX-Y.NYB',
+            icon: 'ph-currency-dollar-simple',
+            category: 'currencies',
+            loadPhase: LOADING_PHASES.critical,
+            formatPrice: (price) => price.toFixed(2)
+        },
+        {
+            symbol: 'EURUSD',
+            name: 'EUR/USD',
+            yahooSymbol: 'EURUSD=X',
+            icon: 'ph-currency-eur',
+            category: 'currencies',
+            loadPhase: LOADING_PHASES.important,
+            formatPrice: (price) => price.toFixed(4)
+        },
+        {
+            symbol: 'GBPUSD',
+            name: 'GBP/USD',
+            yahooSymbol: 'GBPUSD=X',
+            icon: 'ph-currency-gbp',
+            category: 'currencies',
+            loadPhase: LOADING_PHASES.important,
+            formatPrice: (price) => price.toFixed(4)
+        },
+        {
+            symbol: 'USDJPY',
+            name: 'USD/JPY',
+            yahooSymbol: 'JPY=X',
+            icon: 'ph-currency-jpy',
+            category: 'currencies',
+            loadPhase: LOADING_PHASES.important,
+            formatPrice: (price) => price.toFixed(2)
+        },
+        {
+            symbol: 'AUDUSD',
+            name: 'AUD/USD',
+            yahooSymbol: 'AUDUSD=X',
+            icon: 'ph-currency-circle-dollar',
+            category: 'currencies',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => price.toFixed(4)
+        },
+        {
+            symbol: 'USDCAD',
+            name: 'USD/CAD',
+            yahooSymbol: 'USDCAD=X',
+            icon: 'ph-currency-dollar',
+            category: 'currencies',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => price.toFixed(4)
+        }
+    ],
+
+    // Additional indices
+    indicesAdditional: [
+        {
+            symbol: 'RUT',
+            name: 'Russell 2000',
+            yahooSymbol: '^RUT',
+            icon: 'ph-chart-line-up',
+            category: 'indices',
+            loadPhase: LOADING_PHASES.critical,
+            formatPrice: (price) => price.toFixed(2)
+        },
+        {
+            symbol: 'RLG',
+            name: 'Russell 1000 Growth',
+            yahooSymbol: '^RLG',
+            icon: 'ph-chart-line-up',
+            category: 'indices',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => price.toFixed(2)
+        },
+        {
+            symbol: 'RLV',
+            name: 'Russell 1000 Value',
+            yahooSymbol: '^RLV',
+            icon: 'ph-chart-line-up',
+            category: 'indices',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => price.toFixed(2)
+        },
+        {
+            symbol: 'W5000',
+            name: 'Wilshire 5000',
+            yahooSymbol: '^W5000',
+            icon: 'ph-chart-line-up',
+            category: 'indices',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => price.toFixed(2)
+        }
+    ],
+
+    // Commodities (additional)
+    commoditiesAdditional: [
+        {
+            symbol: 'GOLD',
+            name: 'Gold',
+            yahooSymbol: 'GC=F',
+            icon: 'ph-crown',
+            category: 'commodities',
+            loadPhase: LOADING_PHASES.important,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'SILVER',
+            name: 'Silver',
+            yahooSymbol: 'SI=F',
+            icon: 'ph-coins',
+            category: 'commodities',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'COPPER',
+            name: 'Copper',
+            yahooSymbol: 'HG=F',
+            icon: 'ph-cube',
+            category: 'commodities',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'WTI',
+            name: 'WTI Crude Oil',
+            yahooSymbol: 'CL=F',
+            icon: 'ph-drop',
+            category: 'commodities',
+            loadPhase: LOADING_PHASES.important,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'CORN',
+            name: 'Corn',
+            yahooSymbol: 'ZC=F',
+            icon: 'ph-plant',
+            category: 'commodities',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'WHEAT',
+            name: 'Wheat',
+            yahooSymbol: 'ZW=F',
+            icon: 'ph-plant',
+            category: 'commodities',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        }
+    ],
+
+    // International markets
+    international: [
+        {
+            symbol: 'FTSE',
+            name: 'FTSE 100',
+            yahooSymbol: '^FTSE',
+            icon: 'ph-globe',
+            category: 'international',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => price.toFixed(2)
+        },
+        {
+            symbol: 'DAX',
+            name: 'DAX',
+            yahooSymbol: '^GDAXI',
+            icon: 'ph-globe',
+            category: 'international',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => price.toFixed(2)
+        },
+        {
+            symbol: 'CAC',
+            name: 'CAC 40',
+            yahooSymbol: '^FCHI',
+            icon: 'ph-globe',
+            category: 'international',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => price.toFixed(2)
+        },
+        {
+            symbol: 'NIKKEI',
+            name: 'Nikkei 225',
+            yahooSymbol: '^N225',
+            icon: 'ph-globe',
+            category: 'international',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => price.toFixed(2)
+        },
+        {
+            symbol: 'SHANGHAI',
+            name: 'Shanghai',
+            yahooSymbol: '000001.SS',
+            icon: 'ph-globe',
+            category: 'international',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => price.toFixed(2)
+        },
+        {
+            symbol: 'HSI',
+            name: 'Hang Seng',
+            yahooSymbol: '^HSI',
+            icon: 'ph-globe',
+            category: 'international',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => price.toFixed(2)
+        },
+        {
+            symbol: 'ASX',
+            name: 'ASX 200',
+            yahooSymbol: '^AXJO',
+            icon: 'ph-globe',
+            category: 'international',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => price.toFixed(2)
+        }
+    ],
+
+    // Bond ETFs
+    bonds: [
+        {
+            symbol: 'HYG',
+            name: 'High Yield Corp',
+            yahooSymbol: 'HYG',
+            icon: 'ph-bank',
+            category: 'bonds',
+            loadPhase: LOADING_PHASES.important,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'LQD',
+            name: 'Inv Grade Corp',
+            yahooSymbol: 'LQD',
+            icon: 'ph-bank',
+            category: 'bonds',
+            loadPhase: LOADING_PHASES.important,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'TLT',
+            name: '20Y+ Treasury',
+            yahooSymbol: 'TLT',
+            icon: 'ph-bank',
+            category: 'bonds',
+            loadPhase: LOADING_PHASES.important,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'AGG',
+            name: 'Total Bond Market',
+            yahooSymbol: 'AGG',
+            icon: 'ph-bank',
+            category: 'bonds',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'SHY',
+            name: '1-3Y Treasury',
+            yahooSymbol: 'SHY',
+            icon: 'ph-bank',
+            category: 'bonds',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        }
+    ],
+
+    // S&P 500 Sectors
+    sectors: [
+        {
+            symbol: 'XLK',
+            name: 'Technology',
+            yahooSymbol: 'XLK',
+            icon: 'ph-cpu',
+            category: 'sectors',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'XLE',
+            name: 'Energy',
+            yahooSymbol: 'XLE',
+            icon: 'ph-lightning',
+            category: 'sectors',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'XLF',
+            name: 'Financials',
+            yahooSymbol: 'XLF',
+            icon: 'ph-bank',
+            category: 'sectors',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'XLV',
+            name: 'Healthcare',
+            yahooSymbol: 'XLV',
+            icon: 'ph-heartbeat',
+            category: 'sectors',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'XLY',
+            name: 'Consumer Disc',
+            yahooSymbol: 'XLY',
+            icon: 'ph-shopping-cart',
+            category: 'sectors',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'XLP',
+            name: 'Consumer Staples',
+            yahooSymbol: 'XLP',
+            icon: 'ph-shopping-bag',
+            category: 'sectors',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'XLI',
+            name: 'Industrials',
+            yahooSymbol: 'XLI',
+            icon: 'ph-factory',
+            category: 'sectors',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'XLB',
+            name: 'Materials',
+            yahooSymbol: 'XLB',
+            icon: 'ph-cube',
+            category: 'sectors',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'XLRE',
+            name: 'Real Estate',
+            yahooSymbol: 'XLRE',
+            icon: 'ph-buildings',
+            category: 'sectors',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'XLU',
+            name: 'Utilities',
+            yahooSymbol: 'XLU',
+            icon: 'ph-plug',
+            category: 'sectors',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        },
+        {
+            symbol: 'XLC',
+            name: 'Communication',
+            yahooSymbol: 'XLC',
+            icon: 'ph-broadcast',
+            category: 'sectors',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        }
+    ],
+
+    // Crypto (Bitcoin only)
+    crypto: [
+        {
+            symbol: 'BTC',
+            name: 'Bitcoin',
+            yahooSymbol: 'BTC-USD',
+            icon: 'ph-currency-btc',
+            category: 'crypto',
+            loadPhase: LOADING_PHASES.secondary,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+            }).format(price)
+        }
+    ],
+
+    // Legacy tracked assets (for backwards compatibility)
+    legacy: [
+        {
+            symbol: 'NVDA',
+            name: 'NVIDIA',
+            yahooSymbol: 'NVDA',
+            icon: 'ph-cpu',
+            category: 'stock',
+            loadPhase: LOADING_PHASES.critical,
+            formatPrice: (price) => new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }).format(price)
+        }
+    ]
+};
+
+// Flatten all categories into single array
 const ASSET_CONFIGS = [
-    {
-        symbol: 'GOLD',
-        name: 'Gold',
-        yahooSymbol: 'GC=F',
-        icon: 'ph-coins',
-        category: 'commodity',
-        formatPrice: (price) => new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        }).format(price)
-    },
-    {
-        symbol: 'WTI',
-        name: 'WTI Crude',
-        yahooSymbol: 'CL=F',
-        icon: 'ph-drop',
-        category: 'commodity',
-        formatPrice: (price) => new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        }).format(price)
-    },
-    {
-        symbol: '10Y',
-        name: '10Y T-Bill',
-        yahooSymbol: '^TNX',
-        icon: 'ph-bank',
-        category: 'bond',
-        formatPrice: (price) => `${price.toFixed(4)}%`
-    },
-    {
-        symbol: 'GILT30',
-        name: 'UK 30Y Gilt',
-        yahooSymbol: '^TYX',
-        icon: 'ph-bank',
-        category: 'bond',
-        formatPrice: (price) => `${price.toFixed(4)}%`
-    },
-    {
-        symbol: 'VIX',
-        name: 'VIX',
-        yahooSymbol: '^VIX',
-        icon: 'ph-chart-line',
-        category: 'index',
-        formatPrice: (price) => price.toFixed(2)
-    },
-    {
-        symbol: 'NVDA',
-        name: 'NVIDIA',
-        yahooSymbol: 'NVDA',
-        icon: 'ph-cpu',
-        category: 'stock',
-        formatPrice: (price) => new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        }).format(price)
-    },
-    {
-        symbol: 'GBPUSD',
-        name: 'GBP/USD',
-        yahooSymbol: 'USDGBP=X',
-        icon: 'ph-currency-dollar',
-        category: 'forex',
-        formatPrice: (price) => price.toFixed(4)
-    }
+    ...SYMBOL_CATEGORIES.volatility,
+    ...SYMBOL_CATEGORIES.treasuries,
+    ...SYMBOL_CATEGORIES.currencies,
+    ...SYMBOL_CATEGORIES.indicesAdditional,
+    ...SYMBOL_CATEGORIES.commoditiesAdditional,
+    ...SYMBOL_CATEGORIES.international,
+    ...SYMBOL_CATEGORIES.bonds,
+    ...SYMBOL_CATEGORIES.sectors,
+    ...SYMBOL_CATEGORIES.crypto,
+    ...SYMBOL_CATEGORIES.legacy
 ];
 
 // State management
@@ -233,21 +783,47 @@ function setCachedData(symbol, data) {
 }
 
 /**
- * Start staggered fetch for all assets
+ * Start progressive fetch for all assets in phases
+ * Phase 0 (Critical): Load immediately - header indices + key metrics
+ * Phase 1 (Important): Load after 2 seconds - volatility, treasuries, currencies, bonds
+ * Phase 2 (Secondary): Load after 8 seconds - international, sectors, crypto, etc
  */
 function startStaggeredFetch() {
-    // Fetch header indices first
+    let delay = 0;
+
+    // Phase 0: Fetch header indices first (critical)
     HEADER_INDICES.forEach((asset, index) => {
         setTimeout(() => {
             fetchAssetData(asset);
-        }, index * STAGGER_DELAY);
+        }, delay);
+        delay += STAGGER_DELAY;
     });
 
-    // Then fetch tracked assets
-    ASSET_CONFIGS.forEach((asset, index) => {
+    // Phase 0: Critical assets (VIX, 10Y, DXY, RUT, NVDA)
+    const criticalAssets = ASSET_CONFIGS.filter(asset => asset.loadPhase === LOADING_PHASES.critical);
+    criticalAssets.forEach((asset) => {
         setTimeout(() => {
             fetchAssetData(asset);
-        }, (HEADER_INDICES.length + index) * STAGGER_DELAY);
+        }, delay);
+        delay += STAGGER_DELAY;
+    });
+
+    // Phase 1: Important assets (after 2 second delay)
+    const phase1Delay = 2000;
+    const importantAssets = ASSET_CONFIGS.filter(asset => asset.loadPhase === LOADING_PHASES.important);
+    importantAssets.forEach((asset, index) => {
+        setTimeout(() => {
+            fetchAssetData(asset);
+        }, phase1Delay + (index * STAGGER_DELAY));
+    });
+
+    // Phase 2: Secondary assets (after 8 second delay)
+    const phase2Delay = 8000;
+    const secondaryAssets = ASSET_CONFIGS.filter(asset => asset.loadPhase === LOADING_PHASES.secondary);
+    secondaryAssets.forEach((asset, index) => {
+        setTimeout(() => {
+            fetchAssetData(asset);
+        }, phase2Delay + (index * STAGGER_DELAY));
     });
 }
 
@@ -493,4 +1069,64 @@ export function cleanupService() {
  */
 export function forceRefreshAll() {
     startStaggeredFetch();
+}
+
+/**
+ * Get data for a specific category
+ * @param {string} categoryName - Name of the category ('volatility', 'treasuries', etc.)
+ * @returns {Array} Array of asset data with current prices and changes
+ */
+export function getCategoryData(categoryName) {
+    const category = SYMBOL_CATEGORIES[categoryName];
+    if (!category) return [];
+
+    return category.map(asset => {
+        const data = dataCache[asset.symbol] || {
+            currentPrice: 0,
+            change: 0,
+            changePercent: 0,
+            trend: 'neutral',
+            isLoading: true
+        };
+
+        return {
+            symbol: asset.symbol,
+            name: asset.name,
+            icon: asset.icon,
+            value: asset.formatPrice(data.currentPrice || 0),
+            change: formatChange(data.change || 0),
+            changePercent: formatChangePercent(data.changePercent || 0),
+            trend: data.trend || 'neutral',
+            isLoading: data.isLoading || false,
+            error: data.error || null,
+            category: asset.category
+        };
+    });
+}
+
+/**
+ * Calculate yield spread between two treasury symbols
+ * @param {string} symbol1 - First symbol (e.g., '10Y')
+ * @param {string} symbol2 - Second symbol (e.g., '3M')
+ * @returns {number} Spread in basis points
+ */
+export function getYieldSpread(symbol1, symbol2) {
+    const data1 = dataCache[symbol1];
+    const data2 = dataCache[symbol2];
+
+    if (!data1 || !data2) return 0;
+
+    const yield1 = data1.currentPrice || 0;
+    const yield2 = data2.currentPrice || 0;
+
+    // Return spread in basis points
+    return ((yield1 - yield2) * 100).toFixed(0);
+}
+
+/**
+ * Get all symbol categories for rendering
+ * @returns {object} Object containing all categories
+ */
+export function getSymbolCategories() {
+    return SYMBOL_CATEGORIES;
 }

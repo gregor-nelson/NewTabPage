@@ -3,7 +3,10 @@ import {
     initDataService,
     getAllAssetData,
     getHeaderIndicesData,
-    cleanupService
+    cleanupService,
+    getCategoryData,
+    getYieldSpread,
+    getAssetData
 } from './financialDataService.js';
 
 let statusInterval;
@@ -20,8 +23,8 @@ export const financialWidget = {
     // Layout configuration for drag/drop/resize
     layout: {
         defaultPosition: { x: '50%', y: '200px' },
-        defaultSize: { width: '520px', height: '520px' },
-        minSize: { width: 380, height: 400 },
+        defaultSize: { width: '600px', height: '700px' },
+        minSize: { width: 480, height: 600 },
         // No maxSize - can occupy full viewport
         resizable: true,
         draggable: true,
@@ -64,17 +67,512 @@ function stopStatusUpdates() {
     cleanupService();
 }
 
+/**
+ * Helper: Get scoreboard color class based on percentage change
+ */
+function getScoreboardColorClass(changePercent) {
+    const absChange = Math.abs(changePercent);
+
+    if (changePercent >= 2.0) return 'scoreboard-strong-positive';
+    if (changePercent >= 0.5) return 'scoreboard-positive';
+    if (changePercent <= -2.0) return 'scoreboard-strong-negative';
+    if (changePercent <= -0.5) return 'scoreboard-negative';
+    return 'scoreboard-neutral';
+}
+
+/**
+ * Helper: Get traffic light status class based on criteria
+ */
+function getTrafficLightStatus(symbol, value, changePercent) {
+    // VIX: >20 = danger, 15-20 = warning, <15 = positive (inverse)
+    if (symbol === 'VIX') {
+        if (value >= 20) return 'traffic-light-danger';
+        if (value >= 15) return 'traffic-light-warning';
+        return 'traffic-light-positive';
+    }
+
+    // Yield spread: negative = danger (inverted curve)
+    if (symbol === 'SPREAD') {
+        if (value < 0) return 'traffic-light-danger';
+        if (value < 50) return 'traffic-light-warning';
+        return 'traffic-light-positive';
+    }
+
+    // Default: based on change percentage
+    if (changePercent >= 1.0) return 'traffic-light-positive';
+    if (changePercent <= -1.0) return 'traffic-light-danger';
+    if (Math.abs(changePercent) >= 0.3) return 'traffic-light-warning';
+    return 'traffic-light-neutral';
+}
+
+/**
+ * Render Hero Indices - Color-Coded Scoreboard Style
+ */
+function renderHeroIndicesScoreboard() {
+    const spx = getAssetData('SPX');
+    const nasdaq = getAssetData('NASDAQ');
+    const rut = getAssetData('RUT');
+
+    const createScoreboardBox = (data, name, formatDecimals = 2) => {
+        if (!data) {
+            return `
+                <div class="scoreboard-box scoreboard-neutral">
+                    <div class="scoreboard-content">
+                        <div class="scoreboard-label">${name}</div>
+                        <div class="scoreboard-value">--</div>
+                        <div class="scoreboard-change metric-neutral">
+                            <i class="ph ph-minus"></i>
+                            --
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        const colorClass = getScoreboardColorClass(data.changePercent);
+        const trendIcon = data.trend === 'up' ? 'ph-caret-up' :
+                         data.trend === 'down' ? 'ph-caret-down' :
+                         'ph-minus';
+
+        const sign = data.changePercent >= 0 ? '+' : '';
+        const changePercent = `${sign}${data.changePercent.toFixed(2)}%`;
+
+        return `
+            <div class="scoreboard-box ${colorClass}">
+                <div class="scoreboard-content">
+                    <div class="scoreboard-label">${name}</div>
+                    <div class="scoreboard-value">${data.currentPrice.toFixed(formatDecimals).toLocaleString()}</div>
+                    <div class="scoreboard-change">
+                        <i class="ph ${trendIcon}"></i>
+                        ${changePercent}
+                    </div>
+                </div>
+            </div>
+        `;
+    };
+
+    return `
+        <div class="scoreboard-grid">
+            ${createScoreboardBox(spx, 'S&P 500', 2)}
+            ${createScoreboardBox(nasdaq, 'Nasdaq', 2)}
+            ${createScoreboardBox(rut, 'Russell 2000', 2)}
+        </div>
+    `;
+}
+
+/**
+ * Render Market Pulse - Traffic Light Card Style
+ */
+function renderMarketPulseTrafficLight() {
+    const vix = getAssetData('VIX');
+    const dxy = getAssetData('DXY');
+    const btc = getAssetData('BTC');
+    const spread10Y3M = getYieldSpread('10Y', '3M');
+    const isInverted = parseInt(spread10Y3M) < 0;
+
+    const createTrafficLightCard = (symbol, data, name, icon, iconCategory, valueFormatter = null) => {
+        if (!data && symbol !== 'SPREAD') {
+            return `
+                <div class="traffic-light-card">
+                    <div class="traffic-light-circle traffic-light-neutral">
+                        <div class="traffic-light-percentage">--</div>
+                    </div>
+                    <div class="traffic-light-content">
+                        <div class="traffic-light-header">
+                            <i class="ph ${icon} traffic-light-icon ${iconCategory}"></i>
+                            <div class="traffic-light-name">${name}</div>
+                        </div>
+                        <div class="traffic-light-value">--</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        let value, changePercent, statusClass, displayValue;
+
+        if (symbol === 'SPREAD') {
+            value = parseFloat(spread10Y3M);
+            changePercent = 0;
+            statusClass = getTrafficLightStatus('SPREAD', value, 0);
+            displayValue = spread10Y3M !== 0 ? `${spread10Y3M} bps` : '--';
+        } else {
+            value = data.currentPrice || 0;
+            changePercent = data.changePercent || 0;
+            statusClass = getTrafficLightStatus(symbol, value, changePercent);
+            displayValue = valueFormatter ? valueFormatter(value) : value.toFixed(2);
+        }
+
+        const sign = changePercent >= 0 ? '+' : '';
+        const percentageText = symbol === 'SPREAD'
+            ? (isInverted ? 'INV' : 'NORM')
+            : `${sign}${changePercent.toFixed(1)}%`;
+
+        return `
+            <div class="traffic-light-card">
+                <div class="traffic-light-circle ${statusClass}">
+                    <div class="traffic-light-percentage">${percentageText}</div>
+                </div>
+                <div class="traffic-light-content">
+                    <div class="traffic-light-header">
+                        <i class="ph ${icon} traffic-light-icon ${iconCategory}"></i>
+                        <div class="traffic-light-name">${name}</div>
+                    </div>
+                    <div class="traffic-light-value">${displayValue}</div>
+                </div>
+            </div>
+        `;
+    };
+
+    return `
+        <div class="traffic-light-cards">
+            ${createTrafficLightCard('VIX', vix, 'VIX', 'ph-chart-line', 'icon-volatility')}
+            ${createTrafficLightCard('SPREAD', null, '10Y-3M Spread', 'ph-bank', 'icon-treasury')}
+            ${createTrafficLightCard('DXY', dxy, 'US Dollar', 'ph-currency-dollar', 'icon-currency')}
+            ${createTrafficLightCard('BTC', btc, 'Bitcoin', 'ph-currency-btc', 'icon-crypto', (val) => `$${(val / 1000).toFixed(1)}k`)}
+        </div>
+    `;
+}
+
+/**
+ * Render Volatility section with traffic light cards
+ */
+function renderVolatilitySection() {
+    const data = getCategoryData('volatility');
+
+    const volatilityHTML = data.map(metric => {
+        const value = parseFloat(metric.value) || 0;
+        const changePercent = parseFloat(metric.changePercent.replace(/[^0-9.-]/g, '')) || 0;
+        const statusClass = getTrafficLightStatus(metric.symbol, value, changePercent);
+
+        const sign = changePercent >= 0 ? '+' : '';
+        const percentageText = `${sign}${changePercent.toFixed(1)}%`;
+
+        return `
+            <div class="traffic-light-card">
+                <div class="traffic-light-circle ${statusClass}">
+                    <div class="traffic-light-percentage">${percentageText}</div>
+                </div>
+                <div class="traffic-light-content">
+                    <div class="traffic-light-header">
+                        <i class="ph ${metric.icon} traffic-light-icon icon-volatility"></i>
+                        <div class="traffic-light-name">${metric.name}</div>
+                    </div>
+                    <div class="traffic-light-value">${metric.value}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    return `
+        <div class="market-category">
+            <div class="category-label">
+                <i class="ph ph-chart-line category-label-icon"></i>
+                <span>Volatility Metrics</span>
+            </div>
+            <div class="traffic-light-cards">
+                ${volatilityHTML}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render Treasury Yields section with compact grid
+ */
+function renderTreasuriesSection() {
+    const data = getCategoryData('treasuries');
+    const cardsHTML = data.map(metric => createMarketCard(metric)).join('');
+
+    const spread10Y3M = getYieldSpread('10Y', '3M');
+    const isInverted = parseInt(spread10Y3M) < 0;
+
+    return `
+        <div class="market-category">
+            <div class="category-label">
+                <i class="ph ph-bank category-label-icon"></i>
+                <span>Treasury Yields</span>
+            </div>
+            <div class="category-grid">
+                ${cardsHTML}
+            </div>
+            ${isInverted ? `
+                <div class="spread-warning">
+                    <i class="ph ph-warning"></i>
+                    <span>Yield curve inverted (10Y-3M: ${spread10Y3M} bps)</span>
+                </div>
+            ` : ''}
+        </div>
+    `;
+}
+
+/**
+ * Create market card for horizontal scroll sections with category icon
+ */
+function createMarketCard(metric) {
+    const trendClass = metric.trend === 'up' ? 'metric-positive' :
+                       metric.trend === 'down' ? 'metric-negative' :
+                       'metric-neutral';
+
+    const trendIcon = metric.trend === 'up' ? 'ph-caret-up' :
+                      metric.trend === 'down' ? 'ph-caret-down' :
+                      'ph-minus';
+
+    const loadingClass = metric.isLoading ? 'metric-loading' : '';
+
+    // Use the metric's icon if available
+    const categoryIcon = metric.icon || 'ph-chart-line';
+
+    return `
+        <div class="market-card ${loadingClass}" data-symbol="${metric.symbol}" data-category="${metric.category}">
+            <div class="market-card-icon">
+                <i class="ph ${categoryIcon}"></i>
+            </div>
+            <div class="market-card-name">${metric.name}</div>
+            <div class="market-card-value">${metric.value}</div>
+            <div class="market-card-change ${trendClass}">
+                <i class="ph ${trendIcon}"></i>
+                ${metric.changePercent}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Create compact market card for two-column grid layout (currencies & commodities)
+ */
+function createCompactMarketCard(metric) {
+    const trendClass = metric.trend === 'up' ? 'metric-positive' :
+                       metric.trend === 'down' ? 'metric-negative' :
+                       'metric-neutral';
+
+    const trendIcon = metric.trend === 'up' ? 'ph-caret-up' :
+                      metric.trend === 'down' ? 'ph-caret-down' :
+                      'ph-minus';
+
+    const loadingClass = metric.isLoading ? 'metric-loading' : '';
+
+    // Use the metric's icon if available
+    const categoryIcon = metric.icon || 'ph-chart-line';
+
+    return `
+        <div class="market-card market-card-compact ${loadingClass}" data-symbol="${metric.symbol}" data-category="${metric.category}">
+            <div class="market-card-icon">
+                <i class="ph ${categoryIcon}"></i>
+            </div>
+            <div class="market-card-name">${metric.name}</div>
+            <div class="market-card-value">${metric.value}</div>
+            <div class="market-card-change ${trendClass}">
+                <i class="ph ${trendIcon}"></i>
+                ${metric.changePercent}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render Currencies section with compact two-column grid
+ */
+function renderCurrenciesSection() {
+    const data = getCategoryData('currencies');
+    const cardsHTML = data.map(metric => createCompactMarketCard(metric)).join('');
+
+    return `
+        <div class="market-category">
+            <div class="category-label">
+                <i class="ph ph-currency-dollar category-label-icon"></i>
+                <span>Currencies</span>
+            </div>
+            <div class="category-grid-compact">
+                ${cardsHTML}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render Additional Indices section with horizontal scroll
+ */
+function renderAdditionalIndicesSection() {
+    const data = getCategoryData('indicesAdditional');
+    const cardsHTML = data.map(metric => createMarketCard(metric)).join('');
+
+    return `
+        <div class="market-category">
+            <div class="category-label">
+                <i class="ph ph-chart-line-up category-label-icon"></i>
+                <span>Other Indices</span>
+            </div>
+            <div class="category-scroll">
+                ${cardsHTML}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render International Markets section with horizontal scroll
+ */
+function renderInternationalSection() {
+    const data = getCategoryData('international');
+    const cardsHTML = data.map(metric => createMarketCard(metric)).join('');
+
+    return `
+        <div class="market-category">
+            <div class="category-label">
+                <i class="ph ph-globe category-label-icon"></i>
+                <span>International Markets</span>
+            </div>
+            <div class="category-scroll">
+                ${cardsHTML}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render Commodities section with compact two-column grid
+ */
+function renderCommoditiesSection() {
+    const data = getCategoryData('commoditiesAdditional');
+    const cardsHTML = data.map(metric => createCompactMarketCard(metric)).join('');
+
+    return `
+        <div class="market-category">
+            <div class="category-label">
+                <i class="ph ph-coins category-label-icon"></i>
+                <span>Commodities</span>
+            </div>
+            <div class="category-grid-compact">
+                ${cardsHTML}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render Credit/Bond ETFs section with compact grid
+ */
+function renderBondsSection() {
+    const data = getCategoryData('bonds');
+    const cardsHTML = data.map(metric => createMarketCard(metric)).join('');
+
+    return `
+        <div class="market-category">
+            <div class="category-label">
+                <i class="ph ph-bank category-label-icon"></i>
+                <span>Credit & Bonds</span>
+            </div>
+            <div class="category-grid">
+                ${cardsHTML}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render Sector Performance section as Scoreboard Grid (sorted by performance)
+ */
+function renderSectorsSection() {
+    const data = getCategoryData('sectors');
+    // Sort by performance (best to worst)
+    const sorted = data.sort((a, b) => {
+        const aChange = parseFloat(a.changePercent.replace(/[^0-9.-]/g, '')) || 0;
+        const bChange = parseFloat(b.changePercent.replace(/[^0-9.-]/g, '')) || 0;
+        return bChange - aChange;
+    });
+
+    const sectorsHTML = sorted.map(metric => {
+        const changePercent = parseFloat(metric.changePercent.replace(/[^0-9.-]/g, '')) || 0;
+        const colorClass = getScoreboardColorClass(changePercent);
+        const trendIcon = metric.trend === 'up' ? 'ph-caret-up' :
+                         metric.trend === 'down' ? 'ph-caret-down' :
+                         'ph-minus';
+
+        return `
+            <div class="scoreboard-box ${colorClass}">
+                <div class="scoreboard-content">
+                    <div class="scoreboard-label">${metric.name}</div>
+                    <div class="scoreboard-value">${metric.value}</div>
+                    <div class="scoreboard-change">
+                        <i class="ph ${trendIcon}"></i>
+                        ${metric.changePercent}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    return `
+        <div class="market-category">
+            <div class="category-label">
+                <i class="ph ph-chart-bar category-label-icon"></i>
+                <span>Sector Performance</span>
+            </div>
+            <div class="scoreboard-grid">
+                ${sectorsHTML}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Render Crypto section (Bitcoin only)
+ */
+function renderCryptoSection() {
+    const data = getCategoryData('crypto');
+    const rowsHTML = data.map(metric => createCompactMetricRow(metric)).join('');
+
+    return `
+        <div class="financial-section">
+            <div class="section-header">
+                <i class="ph ph-currency-btc"></i>
+                <span>Cryptocurrency</span>
+            </div>
+            <div class="section-content">
+                ${rowsHTML}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * Create compact metric row for sections (smaller than main table rows)
+ */
+function createCompactMetricRow(metric) {
+    const trendClass = metric.trend === 'up' ? 'metric-positive' :
+                       metric.trend === 'down' ? 'metric-negative' :
+                       'metric-neutral';
+
+    const trendIcon = metric.trend === 'up' ? 'ph-caret-up' :
+                      metric.trend === 'down' ? 'ph-caret-down' :
+                      'ph-minus';
+
+    const loadingClass = metric.isLoading ? 'metric-loading' : '';
+
+    return `
+        <div class="compact-metric-row" data-symbol="${metric.symbol}">
+            <div class="compact-metric-label">
+                <i class="ph ${metric.icon}"></i>
+                <span>${metric.name}</span>
+            </div>
+            <div class="compact-metric-data ${loadingClass}">
+                <span class="compact-metric-value">${metric.value}</span>
+                <span class="compact-metric-change ${trendClass}">
+                    <i class="ph ${trendIcon}"></i>
+                    ${metric.changePercent}
+                </span>
+            </div>
+        </div>
+    `;
+}
+
 function renderFinancialPanel() {
     const container = document.getElementById('financial-container');
     if (!container) return;
 
-    // Get header indices data
-    const indicesData = getHeaderIndicesData();
-    const indicesHTML = indicesData.map(index => createIndexItem(index)).join('');
-
-    // Get current asset data from the service
-    const metricsData = getAllAssetData();
-    const metricsHTML = metricsData.map(metric => createMetricRow(metric)).join('');
+    // Get legacy tracked assets for backwards compatibility
+    const legacyData = getAllAssetData().filter(asset => asset.category === 'stock');
+    const legacyHTML = legacyData.map(metric => createMetricRow(metric)).join('');
 
     const panelHTML = `
         <div class="financial-panel">
@@ -88,13 +586,34 @@ function renderFinancialPanel() {
                         <span>ET 00:00</span>
                     </div>
                 </div>
-                <div class="financial-indices" id="financial-indices">
-                    ${indicesHTML}
+            </div>
+
+            ${renderHeroIndicesScoreboard()}
+
+            ${renderMarketPulseTrafficLight()}
+
+            <div class="financial-sections-container">
+                ${renderTreasuriesSection()}
+                ${renderVolatilitySection()}
+                ${renderCurrenciesSection()}
+                ${renderCommoditiesSection()}
+                ${renderBondsSection()}
+                ${renderInternationalSection()}
+                ${renderSectorsSection()}
+                ${renderAdditionalIndicesSection()}
+            </div>
+
+            ${legacyHTML ? `
+                <div class="financial-section">
+                    <div class="section-header">
+                        <i class="ph ph-star"></i>
+                        <span>Tracked Assets</span>
+                    </div>
+                    <div class="financial-table" id="financial-table">
+                        ${legacyHTML}
+                    </div>
                 </div>
-            </div>
-            <div class="financial-table" id="financial-table">
-                ${metricsHTML}
-            </div>
+            ` : ''}
         </div>
     `;
 

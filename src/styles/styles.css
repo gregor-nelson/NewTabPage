@@ -689,17 +689,18 @@ button:focus-visible {
     background-color: transparent;
     border: none;
     border-radius: 0.5rem;
-    padding: 0.75rem;
+    padding: 0.875rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0;
 }
 
 .financial-header {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.625rem;
     padding: 0 0.25rem;
+    margin-bottom: 0.5rem;
 }
 
 .financial-header-top {
@@ -722,6 +723,144 @@ button:focus-visible {
 .eastern-time i {
     font-size: 0.875rem;
     color: #ffffff;
+}
+
+/* Hero Indices Section - Large prominent display */
+.financial-hero {
+    display: flex;
+    gap: 1.75rem;
+    justify-content: center;
+    padding: 1.25rem 0;
+    margin-bottom: 1.25rem;
+}
+
+.hero-index {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.hero-index-label {
+    font-size: 0.75rem;
+    color: #737373;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.hero-index-value {
+    font-size: 2.5rem;
+    font-weight: 300;
+    color: #e5e5e5;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+}
+
+.hero-index-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.hero-index-change i {
+    font-size: 0.875rem;
+}
+
+/* Market Pulse Section - Key indicators */
+.financial-pulse {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.pulse-section-label {
+    font-size: 0.75rem;
+    color: #a3a3a3;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.pulse-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 0.75rem;
+}
+
+.pulse-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.875rem;
+    background: transparent;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.pulse-card:hover {
+    background: rgba(26, 26, 26, 0.3);
+    border-color: rgba(82, 82, 82, 0.2);
+    transform: translateY(-2px);
+}
+
+.pulse-icon {
+    font-size: 2rem;
+    color: #a3a3a3;
+    transition: transform 0.2s ease;
+}
+
+.pulse-card:hover .pulse-icon {
+    transform: scale(1.15);
+}
+
+.pulse-icon.pulse-high {
+    color: #ef4444;
+}
+
+.pulse-icon.pulse-medium {
+    color: #fb923c;
+}
+
+.pulse-icon.pulse-warning {
+    color: #ef4444;
+}
+
+.pulse-icon.pulse-positive {
+    color: #10b981;
+}
+
+.pulse-icon.pulse-negative {
+    color: #ef4444;
+}
+
+.pulse-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.pulse-value {
+    font-size: 1.125rem;
+    color: #e5e5e5;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.pulse-card-label {
+    font-size: 0.6875rem;
+    color: #737373;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
 /* Header Indices Section - Similar to weather widget header */
@@ -903,40 +1042,1195 @@ button:focus-visible {
     }
 }
 
-/* Responsive adjustments for financial panel */
+/* Quick Stats Header - Market summary */
+.financial-quick-stats {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.quick-stats-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.quick-stat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    color: #e5e5e5;
+    font-variant-numeric: tabular-nums;
+    flex-wrap: wrap;
+}
+
+.quick-stat-row span {
+    white-space: nowrap;
+}
+
+.stat-divider {
+    color: #525252;
+    user-select: none;
+}
+
+/* Sections Container - Horizontal flex wrap layout */
+.financial-sections-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.75rem;
+    overflow-y: auto;
+    padding-right: 0.25rem;
+    margin-top: 1rem;
+    align-items: flex-start;
+}
+
+/* Market Category - Clean layout with flex basis for side-by-side */
+.market-category {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1 1 calc(50% - 0.875rem);
+    min-width: 280px;
+}
+
+.category-label {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.8125rem;
+    color: #d4d4d8;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(82, 82, 82, 0.2);
+}
+
+.category-label-icon {
+    font-size: 1.375rem;
+    color: #a3a3a3;
+}
+
+/* Horizontal Scroll Layout */
+.category-scroll {
+    display: flex;
+    gap: 0.625rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.category-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+/* Compact Grid Layout - Enhanced spacing */
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+    gap: 1.125rem;
+}
+
+/* Compact Two-Column Layout for Currencies & Commodities */
+.category-grid-compact {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.875rem;
+}
+
+/* Market Cards - Enhanced visual design */
+.market-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.375rem 1.125rem;
+    background: transparent;
+    border-radius: 0.75rem;
+    border: 1px solid transparent;
+    min-width: 135px;
+    flex-shrink: 0;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Compact version for currencies & commodities */
+.market-card-compact {
+    padding: 0.875rem 0.75rem;
+    gap: 0.5rem;
+    min-width: unset;
+}
+
+.market-card-compact .market-card-icon {
+    font-size: 1.625rem;
+}
+
+.market-card-compact .market-card-name {
+    font-size: 0.6875rem;
+}
+
+.market-card-compact .market-card-value {
+    font-size: 1.0625rem;
+}
+
+.market-card-compact .market-card-change {
+    font-size: 0.8125rem;
+}
+
+.market-card-compact .market-card-change i {
+    font-size: 0.8125rem;
+}
+
+.market-card:hover {
+    background: rgba(26, 26, 26, 0.5);
+    border-color: rgba(82, 82, 82, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.market-card:hover .market-card-icon {
+    transform: scale(1.15);
+}
+
+.market-card-icon {
+    font-size: 2.5rem;
+    color: #737373;
+    transition: all 0.3s ease;
+}
+
+/* Color-code icons by category */
+.market-card[data-category="commodities"] .market-card-icon {
+    color: #f59e0b;
+}
+
+/* Unique natural colors for each commodity */
+.market-card[data-symbol="GOLD"] .market-card-icon {
+    color: #fbbf24; /* Pure gold/yellow */
+}
+
+.market-card[data-symbol="SILVER"] .market-card-icon {
+    color: #d4d4d8; /* Metallic silver/gray */
+}
+
+.market-card[data-symbol="COPPER"] .market-card-icon {
+    color: #ea580c; /* Copper/bronze orange */
+}
+
+.market-card[data-symbol="WTI"] .market-card-icon {
+    color: #1f2937; /* Dark gray/black for crude oil */
+}
+
+.market-card[data-symbol="CORN"] .market-card-icon {
+    color: #fde047; /* Bright corn yellow */
+}
+
+.market-card[data-symbol="WHEAT"] .market-card-icon {
+    color: #d97706; /* Golden wheat/tan */
+}
+
+.market-card[data-category="bonds"] .market-card-icon {
+    color: #3b82f6;
+}
+
+.market-card[data-category="treasuries"] .market-card-icon {
+    color: #3b82f6;
+}
+
+.market-card[data-category="currencies"] .market-card-icon {
+    color: #10b981;
+}
+
+/* Unique colors for each currency pair - Flag-based colors */
+.market-card[data-symbol="DXY"] .market-card-icon {
+    color: #1e40af; /* USA - Navy blue from American flag */
+}
+
+.market-card[data-symbol="EURUSD"] .market-card-icon {
+    color: #2563eb; /* EU - Blue from European Union flag */
+}
+
+.market-card[data-symbol="GBPUSD"] .market-card-icon {
+    color: #dc2626; /* UK - Red from British Union Jack */
+}
+
+.market-card[data-symbol="USDJPY"] .market-card-icon {
+    color: #ef4444; /* Japan - Crimson red from Rising Sun */
+}
+
+.market-card[data-symbol="AUDUSD"] .market-card-icon {
+    color: #06b6d4; /* Australia - Cyan/ocean blue from Southern Cross */
+}
+
+.market-card[data-symbol="USDCAD"] .market-card-icon {
+    color: #f87171; /* Canada - Red from Maple Leaf flag */
+}
+
+.market-card[data-category="indices"] .market-card-icon {
+    color: #8b5cf6;
+}
+
+.market-card[data-category="international"] .market-card-icon {
+    color: #6366f1;
+}
+
+.market-card[data-category="sectors"] .market-card-icon {
+    color: #ec4899;
+}
+
+.market-card[data-category="volatility"] .market-card-icon {
+    color: #ef4444;
+}
+
+.market-card-name {
+    font-size: 0.75rem;
+    color: #a3a3a3;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: center;
+}
+
+.market-card-value {
+    font-size: 1.5rem;
+    color: #ffffff;
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.market-card-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 1rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.market-card-change i {
+    font-size: 1rem;
+}
+
+/* Spread Warning for Treasury section */
+.spread-warning {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 0.875rem;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    color: #ef4444;
+    margin-top: 0.5rem;
+}
+
+.spread-warning i {
+    font-size: 1rem;
+}
+
+/* Compact Metric Row - for sections */
+.compact-metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.625rem;
+    border-radius: 0.375rem;
+    background: transparent;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+}
+
+.compact-metric-row:hover {
+    background: rgba(26, 26, 26, 0.3);
+    border-color: rgba(82, 82, 82, 0.2);
+}
+
+.compact-metric-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    flex: 1;
+}
+
+.compact-metric-label i {
+    font-size: 1rem;
+    flex-shrink: 0;
+    color: #a3a3a3;
+}
+
+.compact-metric-label span {
+    font-size: 0.6875rem;
+    color: #a3a3a3;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.compact-metric-data {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex-shrink: 0;
+}
+
+.compact-metric-value {
+    font-size: 0.8125rem;
+    color: #e5e5e5;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+}
+
+.compact-metric-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.1875rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    min-width: 4rem;
+    justify-content: flex-end;
+}
+
+.compact-metric-change i {
+    font-size: 0.6875rem;
+}
+
+/* Grid layout for sections (International, Commodities, Sectors) */
+.section-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.375rem;
+}
+
+.section-grid .compact-metric-row {
+    padding: 0.4375rem 0.5rem;
+}
+
+.section-grid .compact-metric-label span {
+    font-size: 0.625rem;
+}
+
+.section-grid .compact-metric-value {
+    font-size: 0.75rem;
+}
+
+.section-grid .compact-metric-change {
+    font-size: 0.625rem;
+    min-width: 3.5rem;
+}
+
+/* Spread Indicators (for Treasury section) */
+.spread-indicators {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.spread-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.375rem 0.625rem;
+    border-radius: 0.375rem;
+    background: rgba(255, 255, 255, 0.02);
+    font-size: 0.75rem;
+}
+
+.spread-label {
+    color: #a3a3a3;
+    font-weight: 500;
+}
+
+.spread-value {
+    color: #e5e5e5;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.spread-inverted {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.spread-inverted .spread-value {
+    color: #ef4444;
+}
+
+.spread-inverted i {
+    color: #ef4444;
+    margin-left: 0.375rem;
+}
+
+/* Category-specific icon colors for compact rows */
+.compact-metric-row[data-symbol="VIX"] i,
+.compact-metric-row[data-symbol="VVIX"] i,
+.compact-metric-row[data-symbol="VIX9D"] i,
+.compact-metric-row[data-symbol="VXST"] i {
+    color: #ef4444;
+}
+
+.compact-metric-row[data-symbol="3M"] i,
+.compact-metric-row[data-symbol="5Y"] i,
+.compact-metric-row[data-symbol="10Y"] i,
+.compact-metric-row[data-symbol="30Y"] i {
+    color: #3b82f6;
+}
+
+/* Unique colors for currency compact rows - Flag-based colors */
+.compact-metric-row[data-symbol="DXY"] i {
+    color: #1e40af; /* USA - Navy blue from American flag */
+}
+
+.compact-metric-row[data-symbol="EURUSD"] i {
+    color: #2563eb; /* EU - Blue from European Union flag */
+}
+
+.compact-metric-row[data-symbol="GBPUSD"] i {
+    color: #dc2626; /* UK - Red from British Union Jack */
+}
+
+.compact-metric-row[data-symbol="USDJPY"] i {
+    color: #ef4444; /* Japan - Crimson red from Rising Sun */
+}
+
+.compact-metric-row[data-symbol="AUDUSD"] i {
+    color: #06b6d4; /* Australia - Cyan/ocean blue from Southern Cross */
+}
+
+.compact-metric-row[data-symbol="USDCAD"] i {
+    color: #f87171; /* Canada - Red from Maple Leaf flag */
+}
+
+/* Unique natural colors for commodity compact rows */
+.compact-metric-row[data-symbol="GOLD"] i {
+    color: #fbbf24; /* Pure gold/yellow */
+}
+
+.compact-metric-row[data-symbol="SILVER"] i {
+    color: #d4d4d8; /* Metallic silver/gray */
+}
+
+.compact-metric-row[data-symbol="COPPER"] i {
+    color: #ea580c; /* Copper/bronze orange */
+}
+
+.compact-metric-row[data-symbol="WTI"] i {
+    color: #1f2937; /* Dark gray/black for crude oil */
+}
+
+.compact-metric-row[data-symbol="CORN"] i {
+    color: #fde047; /* Bright corn yellow */
+}
+
+.compact-metric-row[data-symbol="WHEAT"] i {
+    color: #d97706; /* Golden wheat/tan */
+}
+
+.compact-metric-row[data-symbol="HYG"] i,
+.compact-metric-row[data-symbol="LQD"] i,
+.compact-metric-row[data-symbol="TLT"] i,
+.compact-metric-row[data-symbol="AGG"] i,
+.compact-metric-row[data-symbol="SHY"] i {
+    color: #3b82f6;
+}
+
+.compact-metric-row[data-symbol="RUT"] i,
+.compact-metric-row[data-symbol="RLG"] i,
+.compact-metric-row[data-symbol="RLV"] i,
+.compact-metric-row[data-symbol="W5000"] i {
+    color: #8b5cf6;
+}
+
+.compact-metric-row[data-symbol="FTSE"] i,
+.compact-metric-row[data-symbol="DAX"] i,
+.compact-metric-row[data-symbol="CAC"] i,
+.compact-metric-row[data-symbol="NIKKEI"] i,
+.compact-metric-row[data-symbol="SHANGHAI"] i,
+.compact-metric-row[data-symbol="HSI"] i,
+.compact-metric-row[data-symbol="ASX"] i {
+    color: #6366f1;
+}
+
+.compact-metric-row[data-symbol^="XL"] i {
+    color: #ec4899;
+}
+
+.compact-metric-row[data-symbol="BTC"] i {
+    color: #f97316;
+}
+
+/* ========================================
+   COLOR-CODED SCOREBOARD GRID SYSTEM
+   ======================================== */
+
+/* Scoreboard Grid Container */
+.scoreboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Scoreboard Box - Large visual card */
+.scoreboard-box {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    padding: 1.75rem 1.25rem;
+    border-radius: 0.75rem;
+    border: 2px solid transparent;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    overflow: hidden;
+    min-height: 145px;
+}
+
+/* Background icon watermark */
+.scoreboard-box::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Phosphor';
+    font-size: 8rem;
+    opacity: 0.03;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.scoreboard-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Scoreboard content (above watermark) */
+.scoreboard-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+/* Scoreboard label */
+.scoreboard-label {
+    font-size: 0.6875rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: center;
+}
+
+/* Scoreboard main value - HUGE */
+.scoreboard-value {
+    font-size: 3.25rem;
+    font-weight: 300;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    text-align: center;
+    color: #ffffff;
+}
+
+/* Scoreboard change percentage */
+.scoreboard-change {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.scoreboard-change i {
+    font-size: 1.25rem;
+}
+
+/* Color-coded backgrounds with gradients */
+.scoreboard-strong-positive {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.15) 100%);
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.scoreboard-strong-positive .scoreboard-change {
+    color: #10b981;
+}
+
+.scoreboard-positive {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.08) 100%);
+    border-color: rgba(16, 185, 129, 0.25);
+}
+
+.scoreboard-positive .scoreboard-change {
+    color: #34d399;
+}
+
+.scoreboard-neutral {
+    background: linear-gradient(135deg, rgba(115, 115, 115, 0.1) 0%, rgba(115, 115, 115, 0.05) 100%);
+    border-color: rgba(115, 115, 115, 0.2);
+}
+
+.scoreboard-neutral .scoreboard-change {
+    color: #a3a3a3;
+}
+
+.scoreboard-negative {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.08) 100%);
+    border-color: rgba(239, 68, 68, 0.25);
+}
+
+.scoreboard-negative .scoreboard-change {
+    color: #f87171;
+}
+
+.scoreboard-strong-negative {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(239, 68, 68, 0.15) 100%);
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.scoreboard-strong-negative .scoreboard-change {
+    color: #ef4444;
+}
+
+/* ========================================
+   TRAFFIC LIGHT CARD SYSTEM
+   ======================================== */
+
+/* Traffic Light Cards Container */
+.traffic-light-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Traffic Light Card */
+.traffic-light-card {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.125rem 1.25rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.traffic-light-card:hover {
+    background: rgba(26, 26, 26, 0.5);
+    border-color: rgba(82, 82, 82, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Status Circle - Large colored indicator */
+.traffic-light-circle {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.traffic-light-card:hover .traffic-light-circle {
+    transform: scale(1.08);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Percentage inside circle */
+.traffic-light-percentage {
+    font-size: 0.875rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: #ffffff;
+    text-align: center;
+}
+
+/* Status colors */
+.traffic-light-positive {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.traffic-light-warning {
+    background: linear-gradient(135deg, #fb923c 0%, #f59e0b 100%);
+}
+
+.traffic-light-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.traffic-light-neutral {
+    background: linear-gradient(135deg, #525252 0%, #404040 100%);
+}
+
+/* Card Content */
+.traffic-light-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 0;
+}
+
+/* Card Header with Icon */
+.traffic-light-header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.traffic-light-icon {
+    font-size: 1.75rem;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+}
+
+.traffic-light-card:hover .traffic-light-icon {
+    transform: scale(1.1);
+}
+
+/* Icon colors by category */
+.traffic-light-icon.icon-volatility { color: #ef4444; }
+.traffic-light-icon.icon-currency { color: #1e40af; } /* Updated to USA blue for DXY */
+.traffic-light-icon.icon-crypto { color: #f59e0b; }
+.traffic-light-icon.icon-treasury { color: #3b82f6; }
+.traffic-light-icon.icon-commodities { color: #f59e0b; }
+
+.traffic-light-name {
+    font-size: 0.75rem;
+    color: #a3a3a3;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Card Main Value */
+.traffic-light-value {
+    font-size: 1.875rem;
+    font-weight: 300;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+}
+
+/* Responsive adjustments for financial widget */
 @media (max-width: 768px) {
-    .financial-table {
+    .financial-panel {
+        padding: 0.75rem;
+    }
+
+    .financial-header {
+        gap: 0.5rem;
+        margin-bottom: 0.375rem;
+    }
+
+    .financial-hero {
+        gap: 1.25rem;
+        padding: 1rem 0;
+        margin-bottom: 1rem;
+    }
+
+    .hero-index-value {
+        font-size: 2rem;
+    }
+
+    .pulse-cards {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .financial-indices {
-        gap: 1rem;
+    .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.875rem;
     }
 
-    .index-value {
-        font-size: 1.125rem;
+    .category-scroll {
+        gap: 0.5rem;
     }
 
-    .metric-value {
+    .market-card {
+        padding: 1.125rem 0.875rem;
+        gap: 0.625rem;
+        min-width: 120px;
+    }
+
+    .market-card-icon {
+        font-size: 2.25rem;
+    }
+
+    .market-card-name {
+        font-size: 0.6875rem;
+    }
+
+    .market-card-value {
+        font-size: 1.375rem;
+    }
+
+    .market-card-change {
+        font-size: 0.9375rem;
+    }
+
+    .market-card-change i {
+        font-size: 0.9375rem;
+    }
+
+    /* Compact grid responsive - keep 2 columns, tighter spacing */
+    .category-grid-compact {
+        gap: 0.625rem;
+    }
+
+    /* Make compact cards even more compact on mobile */
+    .market-card-compact {
+        padding: 0.75rem 0.625rem;
+        gap: 0.4rem;
+    }
+
+    .market-card-compact .market-card-icon {
+        font-size: 1.5rem;
+    }
+
+    .market-card-compact .market-card-value {
         font-size: 1rem;
     }
 
-    .metric-icon {
-        font-size: 1.125rem;
+    .market-card-compact .market-card-change {
+        font-size: 0.75rem;
+    }
+
+    .market-card-compact .market-card-change i {
+        font-size: 0.75rem;
+    }
+
+    /* Sections stack vertically on mobile with tighter spacing */
+    .financial-sections-container {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .market-category {
+        flex: 1 1 100%;
+        min-width: unset;
+        gap: 0.875rem;
+    }
+
+    /* Compact category labels on mobile */
+    .category-label {
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        padding-bottom: 0.375rem;
+    }
+
+    .category-label-icon {
+        font-size: 1.25rem;
+    }
+
+    /* Scoreboard responsive - 2 columns on tablet */
+    .scoreboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.875rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .scoreboard-value {
+        font-size: 2.75rem;
+    }
+
+    .scoreboard-box {
+        min-height: 125px;
+        padding: 1.25rem 0.875rem;
+        gap: 0.5rem;
+    }
+
+    .scoreboard-label {
+        font-size: 0.625rem;
+    }
+
+    /* Traffic Light responsive - 2 columns on tablet */
+    .traffic-light-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.875rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .traffic-light-card {
+        padding: 1rem 1.125rem;
+        gap: 1rem;
+    }
+
+    .traffic-light-value {
+        font-size: 1.625rem;
+    }
+
+    .traffic-light-circle {
+        width: 54px;
+        height: 54px;
+    }
+
+    .traffic-light-percentage {
+        font-size: 0.75rem;
+    }
+
+    .traffic-light-icon {
+        font-size: 1.5rem;
     }
 }
 
-/* For medium widget sizes, use 2 columns */
 @media (max-width: 520px) {
-    .financial-table {
+    .financial-panel {
+        padding: 0.625rem;
+    }
+
+    .financial-header {
+        gap: 0.375rem;
+    }
+
+    .financial-hero {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 0.875rem 0;
+        margin-bottom: 0.875rem;
+    }
+
+    .hero-index-value {
+        font-size: 2.125rem;
+    }
+
+    .pulse-cards {
         grid-template-columns: repeat(2, 1fr);
     }
+
+    .market-card {
+        min-width: 90px;
+        padding: 1rem 0.75rem;
+        gap: 0.5rem;
+    }
+
+    .market-card-icon {
+        font-size: 2rem;
+    }
+
+    .market-card-name {
+        font-size: 0.625rem;
+    }
+
+    .market-card-value {
+        font-size: 1.25rem;
+    }
+
+    .market-card-change {
+        font-size: 0.875rem;
+    }
+
+    .market-card-change i {
+        font-size: 0.875rem;
+    }
+
+    /* Scoreboard to 1 column on small mobile */
+    .scoreboard-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .scoreboard-box {
+        min-height: 110px;
+        padding: 1.125rem 0.875rem;
+    }
+
+    .scoreboard-value {
+        font-size: 2.5rem;
+    }
+
+    /* Traffic Light to 1 column on small mobile */
+    .traffic-light-cards {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .traffic-light-card {
+        padding: 0.875rem 1rem;
+        gap: 0.875rem;
+    }
+
+    .traffic-light-circle {
+        width: 52px;
+        height: 52px;
+    }
+
+    .traffic-light-value {
+        font-size: 1.5rem;
+    }
+
+    .category-scroll {
+        gap: 0.375rem;
+    }
+
+    /* Even tighter compact cards on small screens */
+    .category-grid-compact {
+        gap: 0.5rem;
+    }
+
+    .market-card-compact {
+        padding: 0.625rem 0.5rem;
+        gap: 0.375rem;
+    }
+
+    .market-card-compact .market-card-icon {
+        font-size: 1.375rem;
+    }
+
+    .market-card-compact .market-card-name {
+        font-size: 0.625rem;
+    }
+
+    .market-card-compact .market-card-value {
+        font-size: 0.9375rem;
+    }
+
+    .market-card-compact .market-card-change {
+        font-size: 0.6875rem;
+    }
+
+    .market-card-compact .market-card-change i {
+        font-size: 0.6875rem;
+    }
+
+    /* Tighter section spacing on small screens */
+    .financial-sections-container {
+        gap: 1.25rem;
+    }
+
+    .market-category {
+        gap: 0.75rem;
+    }
 }
 
-/* For small widget sizes, use single column */
 @media (max-width: 400px) {
-    .financial-table {
+    .financial-panel {
+        padding: 0.5rem;
+    }
+
+    .financial-header {
+        gap: 0.25rem;
+    }
+
+    .financial-hero {
+        padding: 0.75rem 0;
+        margin-bottom: 0.75rem;
+        gap: 0.875rem;
+    }
+
+    .hero-index-value {
+        font-size: 1.875rem;
+    }
+
+    .pulse-cards {
         grid-template-columns: 1fr;
+    }
+
+    .category-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Tightest scoreboard on very small screens */
+    .scoreboard-grid {
+        gap: 0.625rem;
+        margin-bottom: 0.875rem;
+    }
+
+    .scoreboard-box {
+        min-height: 100px;
+        padding: 1rem 0.75rem;
+    }
+
+    .scoreboard-value {
+        font-size: 2.25rem;
+    }
+
+    /* Tightest traffic light on very small screens */
+    .traffic-light-cards {
+        gap: 0.625rem;
+        margin-bottom: 0.875rem;
+    }
+
+    .traffic-light-card {
+        padding: 0.75rem 0.875rem;
+    }
+
+    .traffic-light-circle {
+        width: 48px;
+        height: 48px;
+    }
+
+    .traffic-light-percentage {
+        font-size: 0.6875rem;
+    }
+
+    .traffic-light-value {
+        font-size: 1.375rem;
+    }
+
+    .market-card {
+        padding: 0.875rem 0.625rem;
+        gap: 0.5rem;
+    }
+
+    .market-card-icon {
+        font-size: 1.875rem;
+    }
+
+    .market-card-name {
+        font-size: 0.625rem;
+    }
+
+    .market-card-value {
+        font-size: 1.125rem;
+    }
+
+    .market-card-change {
+        font-size: 0.8125rem;
+    }
+
+    .market-card-change i {
+        font-size: 0.8125rem;
+    }
+
+    /* Keep compact cards in 2 columns even on very small screens */
+    .category-grid-compact {
+        gap: 0.375rem;
+    }
+
+    .market-card-compact {
+        padding: 0.5rem 0.375rem;
+    }
+
+    /* Tightest section spacing for very small screens */
+    .financial-sections-container {
+        gap: 1rem;
+    }
+
+    .market-category {
+        gap: 0.625rem;
     }
 }
 
